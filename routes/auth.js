@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { crearUsuario, loginUsuario, revalidarToken } from '../controllers/auth.js';
 import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validar-campos.js';
+import { pool } from '../database/config.js';
 
 const router = Router();
 
@@ -34,6 +35,14 @@ router.post(
 
 
 router.get('/renew', revalidarToken)
+
+router.get('/base', async (req, res) => {
+    // const result = await pool.query('select * from persona')
+    const result = await pool.query(`insert into persona(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo) values (12496542, 'Juan', 'Perez', 'Gomez', '1999-12-12', 12345678, 'juanito@gmail.com')`)
+    
+    res.json(result)
+}
+)
 
 
 export default router;

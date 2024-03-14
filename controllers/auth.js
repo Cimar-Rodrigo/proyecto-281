@@ -1,4 +1,5 @@
 import { response } from 'express';
+import { pool } from '../database/config.js';
 
 export const crearUsuario = (req, res = response) => {
     
@@ -18,7 +19,9 @@ export const crearUsuario = (req, res = response) => {
 export const loginUsuario = (req, res = response) => {
 
     const { email, password } = req.body
-      
+    
+    
+
     res.json({
         ok: true,
         msg: 'login',
