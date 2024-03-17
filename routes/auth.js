@@ -7,6 +7,7 @@ import { Router } from 'express';
 import { crearUsuario, loginUsuario, revalidarToken } from '../controllers/auth.js';
 import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validar-campos.js';
+import { validarJWT } from '../middlewares/validar-jwt.js';
 
 
 const router = Router();
@@ -23,6 +24,8 @@ router.post(
         check('fecha_nac', 'La fecha de nacimiento es obligatoria').not().isEmpty(),
         check('nro_cel', 'El numero de celular es obligatorio').not().isEmpty().isNumeric(),
         check('correo', 'El email es obligatorio').isEmail(),
+        check('user', 'El usuario es obligatorio').not().isEmpty(),
+        check('password', 'El password debe de ser de un minimo de 8 caracteres').isLength({min: 8}),
         // check('password', 'El password debe de ser de 6 caracteres').isLength({min: 6}),
         validarCampos
     ],
@@ -32,14 +35,16 @@ router.post(
 router.post(
     '/',
     [
-        check('email', 'El email es obligatorio').isEmail(),
-        check('password', 'El password debe de ser de 6 caracteres').isLength({min: 6}),
+        check('user', 'El email es obligatorio').not().isEmpty(),
+        check('password', 'El password debe de ser de 6 caracteres').isLength({min: 8}),
         validarCampos
     ],
     loginUsuario)
 
 
-router.get('/renew', revalidarToken)
+router.get('/renew', [
+    validarJWT
+], revalidarToken)
 
 // router.get('/base', async (req, res) => {
 //     // const result = await pool.query('select * from persona')
