@@ -6,7 +6,7 @@ import { generarJWT } from '../helpers/jwt.js';
 
 export const crearUsuario = async (req, res = response) => {
     
-    const { ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password } = req.body
+    const { ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
 
     // console.log(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo)
 
@@ -36,6 +36,8 @@ export const crearUsuario = async (req, res = response) => {
 
         const passEnc = bcrypt.hashSync(password, salt);
 
+        
+
 
         await pool.query(`
         insert into persona(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo) 
@@ -45,11 +47,35 @@ export const crearUsuario = async (req, res = response) => {
 
         await pool.query(`insert into usuario(user, password, ci) 
         values ('${user}', '${passEnc}', ${ci})`)
-
+        
+        const id = await pool.query(`select id_user from usuario where user = '${user}'`)
         const datos = await pool.query(`select id_user, user from usuario where user = '${user}'`)
-        // Generar nuestro JWT
 
-        const token = await generarJWT(datos[0][0].id_user, datos[0][0].user)
+        
+        if(tipo === 'Donante'){
+            await pool.query(`insert into donante(id_user) values (${datos[0][0].id_user})`)
+            const {direccion_dn, lat, lng} = req.body
+            console.log(direccion_dn, lat, lng)
+            await pool.query(`insert into donante_natural(id_user, direccion_dn, latitud_dn, longitud_dn) values (${datos[0][0].id_user}, '${direccion_dn}', ${lat}, ${lng})`)
+        }
+        else if(tipo === 'orgDonante'){
+            await pool.query(`insert into donante(id_user) values (${datos[0][0].id_user})`)
+            const {nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d} = req.body
+            await pool.query(`insert into organizacion_donante(nombre_od, tipo_od, latitud_od, longitud_od, direccion_od, nit_od) values (${datos[0][0].id_user}, '${nombre_od}', '${tipo_od}', ${lat}, ${lng}, '${direccion_od}', '${nit_od}')`)
+            const idOrg = await pool.query(`select id_org_don from organizacion_donante where nit_od = ${nit_od}`)
+            await pool.query(`insert into encargado_donante(id_user, puesto_trabajo_d, id_org_don) values (${datos[0][0].id_user}, ${puesto_trabajo_d}, ${idOrg})`)
+        }   
+        else if(tipo === 'Receptor'){
+            await pool.query(`insert into receptor(id_user) values (${datos[0][0].id_user})`)
+        }
+        else if(tipo === 'Voluntario'){
+            const {horario, turno} = req.body
+            await pool.query(`insert into voluntario(id_user, horario, turno) values (${datos[0][0].id_user, horario, turno})`)
+        }
+        
+        
+        // Generar nuestro JWT
+        const token = await generarJWT(datos[0][0].id_user, datos[0][0].user, tipo)
 
         res.status(201).json({
             ok: true,
@@ -96,9 +122,9 @@ export const loginUsuario = async (req, res = response) => {
                 msg: 'Password incorrecto'
             });
         }
-
+        const tipo = ""
         // Generar nuestro JWT
-        const token = await generarJWT(result[0][0].id_user, result[0][0].user)
+        const token = await generarJWT(result[0][0].id_user, result[0][0].user, tipo)
 
 
         res.json({
