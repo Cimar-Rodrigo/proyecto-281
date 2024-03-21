@@ -7,7 +7,8 @@ import { generarJWT } from '../helpers/jwt.js';
 export const crearUsuario = async (req, res = response) => {
     
     const { ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
-
+    ci = parseInt(ci)
+    nro_cel = parseInt(nro_cel)
     // console.log(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo)
 
     try {      
