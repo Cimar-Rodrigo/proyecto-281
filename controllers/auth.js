@@ -68,6 +68,7 @@ export const crearUsuario = async (req, res = response) => {
         }
         else if(tipo === 'Voluntario'){
             const {horario, turno} = req.body
+            console.log(horario, turno)
             await pool.query(`insert into voluntario(id_user, horario, turno) values (${datos[0][0].id_user}, ${horario}, ${turno})`)
         }
         
