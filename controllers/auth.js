@@ -7,8 +7,6 @@ import { generarJWT } from '../helpers/jwt.js';
 export const crearUsuario = async (req, res = response) => {
     
     const { ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
-    const ci_c = parseInt(ci)
-    const nro_cel_c = parseInt(nro_cel)
     // console.log(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo)
 
     try {      
@@ -42,14 +40,13 @@ export const crearUsuario = async (req, res = response) => {
 
         await pool.query(`
         insert into persona(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo) 
-        values (${ci_c}, '${nombre}', '${ap_paterno}', '${ap_materno}', 
-        '${fecha_nac}', ${nro_cel_c}, '${correo}')`)
+        values (${ci}, '${nombre}', '${ap_paterno}', '${ap_materno}', 
+        '${fecha_nac}', ${nro_cel}, '${correo}')`)
   
 
         await pool.query(`insert into usuario(user, password, ci) 
-        values ('${user}', '${passEnc}', ${ci_c})`)
+        values ('${user}', '${passEnc}', ${ci})`)
         
-        const id = await pool.query(`select id_user from usuario where user = '${user}'`)
         const datos = await pool.query(`select id_user, user from usuario where user = '${user}'`)
 
         
