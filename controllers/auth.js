@@ -59,9 +59,9 @@ export const crearUsuario = async (req, res = response) => {
         else if(tipo === 'orgDonante'){
             await pool.query(`insert into donante(id_user) values (${datos[0][0].id_user})`)
             const {nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d} = req.body
-            await pool.query(`insert into organizacion_donante(nombre_od, tipo_od, latitud_od, longitud_od, direccion_od, nit_od) values (${datos[0][0].id_user}, '${nombre_od}', '${tipo_od}', '${lat}', '${lng}', '${direccion_od}', '${nit_od}')`)
+            await pool.query(`insert into organizacion_donante(nombre_od, tipo_od, latitud_od, longitud_od, direccion_od, nit_od) values ('${nombre_od}', '${tipo_od}', '${lat}', '${lng}', '${direccion_od}', '${nit_od}')`)
             const idOrg = await pool.query(`select id_org_don from organizacion_donante where nit_od = ${nit_od}`)
-            await pool.query(`insert into encargado_donante(id_user, puesto_trabajo_d, id_org_don) values (${datos[0][0].id_user}, '${puesto_trabajo_d}', ${idOrg})`)
+            await pool.query(`insert into encargado_donante(id_user, puesto_trabajo_d, id_org_don) values (${datos[0][0].id_user}, '${puesto_trabajo_d}', ${idOrg[0][0].id_org_don})`)
         }   
         else if(tipo === 'Receptor'){
             await pool.query(`insert into receptor(id_user) values (${datos[0][0].id_user})`)
