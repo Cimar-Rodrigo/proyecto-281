@@ -1,27 +1,24 @@
 import { response } from 'express';
-import { pool } from '../database/config.js';
 import bcrypt from 'bcryptjs';
 import { generarJWT } from '../helpers/jwt.js';
+import { Usuario, Persona, Receptor, Voluntario } from '../models/index_db.js'
+import { insert_donante, insert_orgDonante } from '../helpers/insertions.js';
 
 
 export const crearUsuario = async (req, res = response) => {
     
     const { ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
-    // console.log(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo)
 
     try {      
-        const  validarCorreo = await pool.query(`select correo from persona where correo = '${correo}'`)
-        const  validarUsuario = await pool.query(`select id_user, user from usuario where user = '${user}'`)
         
-        
-        if (validarCorreo[0][0] !== undefined){
+        if (await Persona.findOne({where:{correo: correo}})){
             console.log("El correo ya existe")
             return res.status(400).json({
                 ok: false,
                 msg: 'Ya existe un usuario con ese correo'
             })
         } 
-        if (validarUsuario[0][0] !== undefined){
+        if (await Usuario.findOne({where:{user:user}})){
             console.log("El usuario ya existe")
             return res.status(400).json({
                 ok: false,
@@ -32,53 +29,38 @@ export const crearUsuario = async (req, res = response) => {
 
         // encriptar contraseña
         const salt = bcrypt.genSaltSync();
-
         const passEnc = bcrypt.hashSync(password, salt);
 
-        
+        // insercion de datos
+        const persona = new Persona({ ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo })
+        const usuario = new Usuario({ user, password: passEnc, ci })
+        await persona.save()
+        await usuario.save()
 
+        if (tipo === 'Donante') {
+            const { direccion_dn, lat, lng } = req.body;
+            insert_donante(direccion_dn, lat, lng, usuario.id_user)
 
-        await pool.query(`
-        insert into persona(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo) 
-        values (${ci}, '${nombre}', '${ap_paterno}', '${ap_materno}', 
-        '${fecha_nac}', ${nro_cel}, '${correo}')`)
-  
-
-        await pool.query(`insert into usuario(user, password, ci) 
-        values ('${user}', '${passEnc}', ${ci})`)
-        
-        const datos = await pool.query(`select id_user, user from usuario where user = '${user}'`)
-
-        
-        if(tipo === 'Donante'){
-            await pool.query(`insert into donante(id_user) values (${datos[0][0].id_user})`)
-            const {direccion_dn, lat, lng} = req.body
-            console.log(direccion_dn, lat, lng)
-            await pool.query(`insert into donante_natural(id_user, direccion_dn, latitud_dn, longitud_dn) values (${datos[0][0].id_user}, '${direccion_dn}', '${lat}', '${lng}')`)
         }
         else if(tipo === 'orgDonante'){
-            await pool.query(`insert into donante(id_user) values (${datos[0][0].id_user})`)
-            const {nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d} = req.body
-            await pool.query(`insert into organizacion_donante(nombre_od, tipo_od, latitud_od, longitud_od, direccion_od, nit_od) values ('${nombre_od}', '${tipo_od}', '${lat}', '${lng}', '${direccion_od}', '${nit_od}')`)
-            const idOrg = await pool.query(`select id_org_don from organizacion_donante where nit_od = ${nit_od}`)
-            await pool.query(`insert into encargado_donante(id_user, puesto_trabajo_d, id_org_don) values (${datos[0][0].id_user}, '${puesto_trabajo_d}', ${idOrg[0][0].id_org_don})`)
+            const {nombre_od, tipo_od, lat, lng , direccion_od, nit_od, puesto_trabajo_d} = req.body
+            insert_orgDonante(nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d, usuario.id_user)
         }   
         else if(tipo === 'Receptor'){
-            await pool.query(`insert into receptor(id_user) values (${datos[0][0].id_user})`)
+            await new Receptor({id_user: usuario.id_user}).save()
         }
         else if(tipo === 'Voluntario'){
             const {horario, turno} = req.body
-            await pool.query(`insert into voluntario(id_user, horario, turno) values (${datos[0][0].id_user}, '${horario}', '${turno}')`)
+            await new Voluntario({id_user: usuario.id_user, horario, turno}).save()
         }
-        
-        
+             
         // Generar nuestro JWT
-        const token = await generarJWT(datos[0][0].id_user, datos[0][0].user)
+        const token = await generarJWT(usuario.id_user, usuario.user)
 
         res.status(201).json({
             ok: true,
-            uid: datos[0][0].id_user,
-            name: datos[0][0].user,
+            uid: usuario.id_user,
+            name: usuario.user,
             token
     
         })
@@ -90,18 +72,29 @@ export const crearUsuario = async (req, res = response) => {
         })
         console.log(error)        
     }
-
+    
 }
 
 export const loginUsuario = async (req, res = response) => {
 
     const { user, password } = req.body
     
+    /*const prueba = await Persona.findAll({
+        include: {
+            model: Usuario
+        }
+        
+    })
+    
+    res.json(prueba)
+    */
     try{
         
-        const result = await pool.query(`select id_user, user, password from usuario where user = '${user}'`)
-        
-        if (result[0][0] === undefined){
+        const usuario = await Usuario.findOne({ where: {user: user} })
+
+        // console.log(usuario)
+
+        if (!usuario){
             return res.status(400).json({
                 ok: false,
                 msg: 'El usuario no existe con ese usuario'
@@ -110,7 +103,7 @@ export const loginUsuario = async (req, res = response) => {
 
         // confirmar los passwords
 
-        const validPassword = bcrypt.compareSync(password, result[0][0].password);
+        const validPassword = bcrypt.compareSync(password, usuario.dataValues.password);
 
         // console.log(validPassword)
 
@@ -121,13 +114,13 @@ export const loginUsuario = async (req, res = response) => {
             });
         }
         // Generar nuestro JWT
-        const token = await generarJWT(result[0][0].id_user, result[0][0].user)
+        const token = await generarJWT(usuario.id_user, usuario.user)
 
 
         res.json({
             ok: true,
-            uid: result[0][0].id_user,
-            name: result[0][0].user,
+            uid: usuario.id_user,
+            name: usuario.user,
             token
         })
 
@@ -137,7 +130,7 @@ export const loginUsuario = async (req, res = response) => {
             msg: 'Por favor hable con el administrador'
         })
         console.log(error)        
-    }
+    } 
     
 }
 
@@ -154,3 +147,4 @@ export const revalidarToken = async (req, res = response) => {
     })
      
 }
+
