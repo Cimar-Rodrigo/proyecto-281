@@ -7,7 +7,7 @@ const Receptor_natural = db.define("Receptor_natural", {
         primaryKey: true,
         allowNull: false,
     },
-    descipcion_rn: {
+    descripcion_rn: {
         type: DataTypes.STRING,
         allowNull: false,
     },
