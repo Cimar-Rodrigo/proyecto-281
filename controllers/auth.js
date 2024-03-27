@@ -30,10 +30,10 @@ export const crearUsuario = async (req, res = response) => {
         // encriptar contraseña
         const salt = bcrypt.genSaltSync();
         const passEnc = bcrypt.hashSync(password, salt);
-
+        const estado = 0;
         // insercion de datos
         const persona = new Persona({ ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo })
-        const usuario = new Usuario({ user, password: passEnc, ci })
+        const usuario = new Usuario({ user, password: passEnc, ci, estado })
         await persona.save()
         await usuario.save()
 
