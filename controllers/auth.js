@@ -62,7 +62,8 @@ export const crearUsuario = async (req, res = response) => {
             uid: usuario.id_user,
             name: usuario.user,
             tipo: tipo,
-            token
+            token,
+            estado: estado
     
         })
         
@@ -115,6 +116,12 @@ export const loginUsuario = async (req, res = response) => {
             });
         }
 
+        if(usuario.dataValues.estado === 0){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario en revision'
+            });
+        }
 
         const tipo = await verificar_tipo(usuario.id_user);
         
