@@ -19,6 +19,10 @@ const Usuario = db.define("Usuario", {
         type: DataTypes.INTEGER,
         
         allowNull: false,
+    },
+    estado:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
     }
 });
 

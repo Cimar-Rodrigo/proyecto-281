@@ -2,7 +2,7 @@ import { response } from 'express';
 import bcrypt from 'bcryptjs';
 import { generarJWT } from '../helpers/jwt.js';
 import { Usuario, Persona, Receptor, Voluntario } from '../models/index_db.js'
-import { insert_donante, insert_orgDonante } from '../helpers/insertions.js';
+import { insert_donante, insert_orgDonante, verificar_tipo } from '../helpers/insertions.js';
 
 
 export const crearUsuario = async (req, res = response) => {
@@ -55,12 +55,13 @@ export const crearUsuario = async (req, res = response) => {
         }
              
         // Generar nuestro JWT
-        const token = await generarJWT(usuario.id_user, usuario.user)
+        const token = await generarJWT(usuario.id_user, usuario.user, tipo)
 
         res.status(201).json({
             ok: true,
             uid: usuario.id_user,
             name: usuario.user,
+            tipo: tipo,
             token
     
         })
@@ -113,14 +114,19 @@ export const loginUsuario = async (req, res = response) => {
                 msg: 'Password incorrecto'
             });
         }
+
+
+        const tipo = await verificar_tipo(usuario.id_user);
+        
         // Generar nuestro JWT
-        const token = await generarJWT(usuario.id_user, usuario.user)
+        const token = await generarJWT(usuario.id_user, usuario.user, tipo)
 
 
         res.json({
             ok: true,
             uid: usuario.id_user,
             name: usuario.user,
+            tipo: tipo,
             token
         })
 
@@ -136,13 +142,15 @@ export const loginUsuario = async (req, res = response) => {
 
 export const revalidarToken = async (req, res = response) => {
     
-    const { uid, name } = req;
+    const { uid, name, tipo } = req;
 
+    
     //generar nuevo JWT y retornarlo en esta peticion
-    const token = await generarJWT(uid, name)
+    const token = await generarJWT(uid, name, tipo)
 
     res.json({
             ok: true,
+            
             token
     })
      
