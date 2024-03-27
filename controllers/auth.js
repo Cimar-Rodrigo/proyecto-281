@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import { generarJWT } from '../helpers/jwt.js';
 import { Usuario, Persona, Receptor, Voluntario } from '../models/index_db.js'
 import { insert_donante, insert_orgDonante, verificar_tipo } from '../helpers/insertions.js';
+import Usuario_n from '../models/usuario_n.js';
 
 
 export const crearUsuario = async (req, res = response) => {
@@ -53,6 +54,10 @@ export const crearUsuario = async (req, res = response) => {
             const {horario, turno} = req.body
             await new Voluntario({id_user: usuario.id_user, horario, turno}).save()
         }
+        else if(tipo === 'Usuario_n'){
+            await new Usuario_n({id_user: id_user}).save();
+        }
+        
              
         // Generar nuestro JWT
         const token = await generarJWT(usuario.id_user, usuario.user, tipo)
