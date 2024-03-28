@@ -17,12 +17,12 @@ export const validarJWT = (req, res = response, next) => {
 
     try{
 
-        const {uid, name, tipo} = jwt.verify(
+        const {id_user, name, tipo} = jwt.verify(
             token,
             process.env.SECRET_JWT_SEED
         )
 
-        req.uid = uid
+        req.id_user = id_user
         req.name = name
         req.tipo = tipo
 

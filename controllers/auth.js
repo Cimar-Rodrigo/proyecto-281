@@ -152,7 +152,7 @@ export const loginUsuario = async (req, res = response) => {
 
         res.json({
             ok: true,
-            uid: usuario.id_user,
+            id_user: usuario.id_user,
             name: usuario.user,
             tipo: tipo,
             token
@@ -170,11 +170,12 @@ export const loginUsuario = async (req, res = response) => {
 
 export const revalidarToken = async (req, res = response) => {
     
-    const { uid, name, tipo } = req;
+    const { id_user, name, tipo } = req;
 
+    //console.log(id_user, name, tipo)
     
     //generar nuevo JWT y retornarlo en esta peticion
-    const token = await generarJWT(uid, name, tipo)
+    const token = await generarJWT(id_user, name, tipo)
 
     res.json({
             ok: true,

@@ -61,3 +61,28 @@ export const mostrar_usuarios = async (req, res = response) => {
         })
     }
 }
+
+export const validar_usuario = async (req, res = response) => {
+
+    const { id_user, estado } = req.body
+
+    try {
+        await Usuario.update({estado: estado}, {
+            where: {
+                id_user: id_user
+            }
+        })
+
+        res.json({
+            ok: true,
+            msg: 'Usuario actualizado'
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        })
+        console.log(error)        
+    }
+}
