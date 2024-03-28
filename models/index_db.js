@@ -23,10 +23,18 @@ import Tiene_d from './tiene_d.js'
 import Tiene_p from './tiene_p.js'
 import Usuario from './usuario.js'
 import Voluntario from './voluntario.js'
-
+import Usuario_n from './usuario_n.js'
+import Administrador from './administrador.js'
 
 Usuario.belongsTo(Persona, {foreignKey: "ci"})
 Persona.hasMany(Usuario, {foreignKey: "ci"})
+
+Donante.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Donante, {foreignKey:"id_user"})
+
+
+Voluntario.belongsTo(Usuario, {foreignKey:'id_user'})
+Usuario.hasMany(Voluntario, {foreignKey:"id_user"})
 
 export {
     Alimento,
@@ -54,4 +62,6 @@ export {
     Tiene_p,
     Usuario,
     Voluntario,
+    Usuario_n,
+    Administrador
 }

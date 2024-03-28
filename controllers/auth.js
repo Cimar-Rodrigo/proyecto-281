@@ -2,7 +2,7 @@ import { response } from 'express';
 import bcrypt from 'bcryptjs';
 import { generarJWT } from '../helpers/jwt.js';
 import { Usuario, Persona, Receptor, Voluntario } from '../models/index_db.js'
-import { insert_donante, insert_orgDonante, verificar_tipo } from '../helpers/insertions.js';
+import { insert_donante, insert_OrgBenenefica, insert_orgDonante, insert_orgReceptora, insert_receptorNatural, verificar_tipo } from '../helpers/insertions.js';
 import Usuario_n from '../models/usuario_n.js';
 
 
@@ -38,24 +38,35 @@ export const crearUsuario = async (req, res = response) => {
         await persona.save()
         await usuario.save()
 
-        if (tipo === 'Donante') {
+        if (tipo === 'donante') {
             const { direccion_dn, lat, lng } = req.body;
             insert_donante(direccion_dn, lat, lng, usuario.id_user)
-
         }
         else if(tipo === 'orgDonante'){
             const {nombre_od, tipo_od, lat, lng , direccion_od, nit_od, puesto_trabajo_d} = req.body
             insert_orgDonante(nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d, usuario.id_user)
         }   
-        else if(tipo === 'Receptor'){
-            await new Receptor({id_user: usuario.id_user}).save()
+        else if(tipo === 'receptorNatural'){
+            const { descripcion_rn, direccion_rn, lat, lng } = req.body
+            insert_receptorNatural(usuario.id_user, descripcion_rn, direccion_rn, lat, lng)
+            
         }
-        else if(tipo === 'Voluntario'){
+        else if(tipo === 'orgBenefica'){
+            const {puesto_trabajo_ob, nombre_ob, tipo_ob, direccion_b, lat, lng, nit_ob} = req.body
+            insert_OrgBenenefica(usuario.id_user, puesto_trabajo_ob, nombre_ob, tipo_ob, direccion_b, lat, lng, nit_ob)
+        }
+
+        else if(tipo === 'orgReceptora'){
+            const {puesto_trabajo_er, nombre_or, tipo_or, direccion_or, lat, lng, nit_or} = req.body
+            insert_orgReceptora(usuario.id_user, puesto_trabajo_er, nombre_or, tipo_or, direccion_or, lat, lng, nit_or)
+        }
+
+        else if(tipo === 'voluntario'){
             const {horario, turno} = req.body
             await new Voluntario({id_user: usuario.id_user, horario, turno}).save()
         }
-        else if(tipo === 'Usuario_n'){
-            await new Usuario_n({id_user: id_user}).save();
+        else if(tipo === 'usuarioN'){
+            await new Usuario_n({id_user: usuario.id_user}).save();
         }
         
              
@@ -99,8 +110,6 @@ export const loginUsuario = async (req, res = response) => {
         
         const usuario = await Usuario.findOne({ where: {user: user} })
 
-        // console.log(usuario)
-
         if (!usuario){
             return res.status(400).json({
                 ok: false,
@@ -126,6 +135,13 @@ export const loginUsuario = async (req, res = response) => {
                 ok: false,
                 msg: 'Usuario en revision'
             });
+        }
+
+        if(usuario.dataValues.estado === 2){
+            return res.status(400).json({
+                ok: false,
+                msg: 'Usuario rechazado'
+            })
         }
 
         const tipo = await verificar_tipo(usuario.id_user);

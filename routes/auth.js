@@ -8,7 +8,9 @@ import { crearUsuario, loginUsuario, revalidarToken } from '../controllers/auth.
 import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validar-campos.js';
 import { validarJWT } from '../middlewares/validar-jwt.js';
-
+import Administrador from '../models/administrador.js';
+import Usuario from '../models/usuario.js';
+import bcrypt from 'bcryptjs'
 
 const router = Router();
 
@@ -46,13 +48,17 @@ router.get('/renew', [
     validarJWT
 ], revalidarToken)
 
-// router.get('/base', async (req, res) => {
-//     // const result = await pool.query('select * from persona')
-//     const result = await pool.query(`insert into persona(ci, nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo) values (12496542, 'Juan', 'Perez', 'Gomez', '1999-12-12', 12345678, 'juanito@gmail.com')`)
-//     
-//     res.json(result)
-// }
-// )
+// router.post('/admin', async (req, res) => {
+//     const { user, password, ci } = req.body
+//     const salt = bcrypt.genSaltSync();
+//     const passEnc = bcrypt.hashSync(password, salt);
+//     const usuario = new Usuario({ user, password:passEnc, ci, estado:1 })
+//     await usuario.save()
+//     const admin = new Administrador({ id_user: usuario.id_user })
+//     await admin.save()
+//     res.json({msg: 'admin'})
+// 
+// })
 
 
 export default router;
