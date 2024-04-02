@@ -153,9 +153,9 @@ export const clasificarEncargadosOrganizacionBenefica = async () => {
                 apellido_pat: encargado.dataValues.Usuario.Persona.dataValues.ap_paterno,
                 apellido_mat: encargado.dataValues.Usuario.Persona.dataValues.ap_materno,
                 correo: encargado.dataValues.Usuario.Persona.dataValues.correo,
-                nombre_od: encargado.dataValues.Organizacion_benefica.dataValues.nombre_ob,
-                direccion_od: encargado.dataValues.Organizacion_benefica.dataValues. direccion_b,
-                nit_od: encargado.dataValues.Organizacion_benefica.dataValues.nit_ob
+                nombre_ob: encargado.dataValues.Organizacion_benefica.dataValues.nombre_ob,
+                direccion_ob: encargado.dataValues.Organizacion_benefica.dataValues. direccion_b,
+                nit_ob: encargado.dataValues.Organizacion_benefica.dataValues.nit_ob
             }]
         }
     })
@@ -190,9 +190,9 @@ export const clasificarEncargadosOrganizacionReceptora = async () => {
                 apellido_pat: encargado.dataValues.Usuario.Persona.dataValues.ap_paterno,
                 apellido_mat: encargado.dataValues.Usuario.Persona.dataValues.ap_materno,
                 correo: encargado.dataValues.Usuario.Persona.dataValues.correo,
-                nombre_od: encargado.dataValues.Organizacion_receptora.dataValues.nombre_or,
-                direccion_od: encargado.dataValues.Organizacion_receptora.dataValues. direccion_or,
-                nit_od: encargado.dataValues.Organizacion_receptora.dataValues.nit_or
+                nombre_or: encargado.dataValues.Organizacion_receptora.dataValues.nombre_or,
+                direccion_or: encargado.dataValues.Organizacion_receptora.dataValues. direccion_or,
+                nit_or: encargado.dataValues.Organizacion_receptora.dataValues.nit_or
             }]
         }
     })
