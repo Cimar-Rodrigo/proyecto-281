@@ -52,13 +52,13 @@ export const crearUsuario = async (req, res = response) => {
             
         }
         else if(tipo === 'orgBenefica'){
-            const {puesto_trabajo_ob, nombre_ob, tipo_ob, direccion_b, lat, lng, nit_ob} = req.body
-            insert_OrgBenenefica(usuario.id_user, puesto_trabajo_ob, nombre_ob, tipo_ob, direccion_b, lat, lng, nit_ob)
+            const {puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od} = req.body
+            insert_OrgBenenefica(usuario.id_user, puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od)
         }
 
         else if(tipo === 'orgReceptora'){
-            const {puesto_trabajo_er, nombre_or, tipo_or, direccion_or, lat, lng, nit_or} = req.body
-            insert_orgReceptora(usuario.id_user, puesto_trabajo_er, nombre_or, tipo_or, direccion_or, lat, lng, nit_or)
+            const {puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od} = req.body
+            insert_orgReceptora(usuario.id_user, puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od)
         }
 
         else if(tipo === 'voluntario'){
