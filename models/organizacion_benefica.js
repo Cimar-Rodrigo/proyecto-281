@@ -12,11 +12,11 @@ const Organizacion_benefica = db.define("Organizacion_benefica", {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    direccion_ob: {
+    direccion_b: {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    tipo_b: {
+    tipo_ob: {
         type: DataTypes.STRING,
         allowNull: false,
     },

@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 import authRoutes from './routes/auth.js'
 import cors from 'cors'
 import db from './database/connection.js'
-import { escape } from 'mysql2'
 import reviewRoutes from './routes/review.js'
 
 const app = express()
@@ -21,12 +20,10 @@ const corsOptions ={
   credentials:true,       
   optionSuccessStatus:200,
 }
-
 app.use(cors(corsOptions))
 
 app.use(express.json())
 // app.use(express.urlencoded({ extended: true }))
-escape
 app.use(express.static('public'))
 
 //Rutas

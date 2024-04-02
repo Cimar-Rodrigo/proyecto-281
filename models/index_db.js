@@ -29,12 +29,41 @@ import Administrador from './administrador.js'
 Usuario.belongsTo(Persona, {foreignKey: "ci"})
 Persona.hasMany(Usuario, {foreignKey: "ci"})
 
+
+
 Donante.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Donante, {foreignKey:"id_user"})
 
+Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
+Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
+
+Encargado_donante.belongsTo(Usuario, {foreignKey: 'id_user'})
+Usuario.hasMany(Encargado_donante, {foreignKey: 'id_user'})
+
+Encargado_org_ben.belongsTo(Usuario, {foreignKey: 'id_user'})
+Usuario.hasMany(Encargado_org_ben, {foreignKey: 'id_user'})
+
+Encargado_receptor.belongsTo(Usuario, {foreignKey: 'id_user'})
+Usuario.hasMany(Encargado_receptor, {foreignKey: 'id_user'})
+
+Receptor_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
+Usuario.hasMany(Receptor_natural, {foreignKey: 'id_user'})
+
+Encargado_org_ben.belongsTo(Organizacion_benefica, {foreignKey: 'id_org_ben'})
+Organizacion_benefica.hasMany(Encargado_org_ben, {foreignKey: 'id_org_ben'})
+
+Encargado_donante.belongsTo(Organizacion_donante, {foreignKey: 'id_org_don'})
+Organizacion_donante.hasMany(Encargado_donante, {foreignKey: 'id_org_don'})
+
+Encargado_receptor.belongsTo(Organizacion_receptora, {foreignKey: 'id_org_rec'})
+Organizacion_receptora.hasMany(Encargado_receptor, {foreignKey: 'id_org_rec'})
 
 Voluntario.belongsTo(Usuario, {foreignKey:'id_user'})
 Usuario.hasMany(Voluntario, {foreignKey:"id_user"})
+
+//Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
+//Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
+
 
 export {
     Alimento,

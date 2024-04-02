@@ -8,9 +8,6 @@ import { crearUsuario, loginUsuario, revalidarToken } from '../controllers/auth.
 import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validar-campos.js';
 import { validarJWT } from '../middlewares/validar-jwt.js';
-import Administrador from '../models/administrador.js';
-import Usuario from '../models/usuario.js';
-import bcrypt from 'bcryptjs'
 
 const router = Router();
 

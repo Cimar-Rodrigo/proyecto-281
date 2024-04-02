@@ -1,6 +1,6 @@
 import {Voluntario, Usuario, Persona, Donante_natural, Encargado_donante, Organizacion_donante, Receptor_natural, Organizacion_benefica, Organizacion_receptora, Encargado_org_ben, Encargado_receptor} from '../models/index_db.js'
 
-export const clasificarVoluntarios = async () => {
+export const clasificarVoluntariosA = async () => {
     const voluntarios = await Voluntario.findAll({
         include:[
             {
@@ -14,7 +14,7 @@ export const clasificarVoluntarios = async () => {
     let jVoluntarios = []
     
     voluntarios.map( (voluntario) =>{
-        if(voluntario.dataValues.Usuario.dataValues.estado === 0){
+        if(voluntario.dataValues.Usuario.dataValues.estado === (1 || 2)){
                 //console.log(voluntarios)
                 jVoluntarios = [...jVoluntarios, {
                     id_user: voluntario.dataValues.id_user,
@@ -31,7 +31,7 @@ export const clasificarVoluntarios = async () => {
     return jVoluntarios
 }
 
-export const clasificarDonantesNaturales = async () => {
+export const clasificarDonantesNaturalesA = async () => {
     const donantesNaturales = await Donante_natural.findAll({
         
         include: [
@@ -46,7 +46,7 @@ export const clasificarDonantesNaturales = async () => {
     let jDonantesNaturales = []
 
     donantesNaturales.map( (donanteNatural) => {
-        if(donanteNatural.dataValues.Usuario.dataValues.estado === 0){
+        if(donanteNatural.dataValues.Usuario.dataValues.estado === (1 || 2)){
             jDonantesNaturales = [...jDonantesNaturales, {
                 id_user: donanteNatural.dataValues.id_user,
                 user: donanteNatural.dataValues.Usuario.dataValues.user,
@@ -60,7 +60,7 @@ export const clasificarDonantesNaturales = async () => {
     return jDonantesNaturales
 }
 
-export const clasificarEncargadosOrganizacionDonante = async () => {
+export const clasificarEncargadosOrganizacionDonanteA = async () => {
     const encargadosOrganizacionDonante = await Encargado_donante.findAll({
         include: [
             {
@@ -78,7 +78,7 @@ export const clasificarEncargadosOrganizacionDonante = async () => {
     let jEncargadosDonantes = []
 
     encargadosOrganizacionDonante.map( (encargado) => {
-        if(encargado.dataValues.Usuario.dataValues.estado === 0){
+        if(encargado.dataValues.Usuario.dataValues.estado === (1 || 2)){
             jEncargadosDonantes = [...jEncargadosDonantes, {
                 id_user: encargado.dataValues.Usuario.id_user,
                 user: encargado.dataValues.Usuario.user,
@@ -97,7 +97,7 @@ export const clasificarEncargadosOrganizacionDonante = async () => {
 
 }
 
-export const clasificarReceptoresNaturales = async () => {
+export const clasificarReceptoresNaturalesA = async () => {
     const receptoresNaturales = await Receptor_natural.findAll({
         include: [
             {
@@ -112,7 +112,7 @@ export const clasificarReceptoresNaturales = async () => {
     let jReceptoresNaturales = []
 
     receptoresNaturales.map( (receptorNatural) => {
-        if(receptorNatural.dataValues.Usuario.dataValues.estado === 0){
+        if(receptorNatural.dataValues.Usuario.dataValues.estado === (1 || 2)){
             jReceptoresNaturales = [...jReceptoresNaturales, {
                 id_user: receptorNatural.dataValues.id_user,
                 user: receptorNatural.dataValues.Usuario.dataValues.user,
@@ -127,7 +127,7 @@ export const clasificarReceptoresNaturales = async () => {
     return jReceptoresNaturales
 }
 
-export const clasificarEncargadosOrganizacionBenefica = async () => {
+export const clasificarEncargadosOrganizacionBeneficaA = async () => {
     const encargadosOrganizacionBenefica = await Encargado_org_ben.findAll({
         include: [
             {
@@ -145,7 +145,7 @@ export const clasificarEncargadosOrganizacionBenefica = async () => {
     let jEncargadosOganizacionBenefica = []
 
     encargadosOrganizacionBenefica.map( (encargado) => {
-        if(encargado.dataValues.Usuario.dataValues.estado === 0){
+        if(encargado.dataValues.Usuario.dataValues.estado === (1 || 2)){
             jEncargadosOganizacionBenefica = [...jEncargadosOganizacionBenefica, {
                 id_user: encargado.dataValues.Usuario.id_user,
                 user: encargado.dataValues.Usuario.user,
@@ -164,7 +164,7 @@ export const clasificarEncargadosOrganizacionBenefica = async () => {
 }
 
 
-export const clasificarEncargadosOrganizacionReceptora = async () => {
+export const clasificarEncargadosOrganizacionReceptoraA = async () => {
     const encargadosOrganizacionReceptora = await Encargado_receptor.findAll({
         include: [
             {
@@ -182,7 +182,7 @@ export const clasificarEncargadosOrganizacionReceptora = async () => {
     let jEncargadosReceptores = []
 
     encargadosOrganizacionReceptora.map( (encargado) => {
-        if(encargado.dataValues.Usuario.dataValues.estado === 0){
+        if(encargado.dataValues.Usuario.dataValues.estado === (1 || 2)){
             jEncargadosReceptores = [...jEncargadosReceptores, {
                 id_user: encargado.dataValues.Usuario.id_user,
                 user: encargado.dataValues.Usuario.user,
