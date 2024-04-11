@@ -1,5 +1,5 @@
 import { response } from 'express';
-import { Donacion, Responsable_recojo, Usuario, Persona } from '../models/index_db.js';
+import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 
 export const addDonation = async (req, res = response) => {
@@ -114,7 +114,8 @@ export const confirmarResponsableDonacion = async (req, res = response) => {
 }
 
 export const getPendingDonationsResponsableVoluntario = async (req, res = response) => {
-    const {id_user} = req.body
+    let id_user = req.header('id_user');
+    id_user = parseInt(id_user)
     try{
         let donaciones = []
         const donations = await Donacion.findAll(
@@ -145,10 +146,10 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
             }else{
                 let sw = true;
                 donacion.dataValues.Responsable_recojos.map((responsable) => {
-                    console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
-                    if(responsable.dataValues.id_user === id_user && sw){
-                        sw = false;
-                    }
+                console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
+                if(responsable.dataValues.id_user === id_user && sw){
+                    sw = false;
+                }
                     
                 })
 
@@ -191,10 +192,10 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
                 },
                 include:[
                     {
-                        model: Usuario,
-                        include: {
-                            model: Persona
-                        }
+                        model: Responsable_recojo,
+                        include: 
+                            [{model: Usuario, include: [{model: Persona}]}]  
+                        
                     }
                 ]
             }
@@ -205,19 +206,19 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
                 {
                     id_donacion: donacion.dataValues.id_donacion,
                     fecha_d: donacion.dataValues.fecha_d,
-                    nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.nombre,
+                    /*nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.nombre,
                     ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.ap_paterno,
-                    ap_materno: donacion.dataValues.Usuario.dataValues.Persona.ap_materno
+                    ap_materno: donacion.dataValues.Usuario.dataValues.Persona.ap_materno,*/
+                    responsable_recojo: donacion.dataValues.Responsable_recojos
 
                 }
             ]
         })
 
-        console.log(donaciones)
-
+        console.log(donations)
         res.status(200).json({
             ok: true,
-            donaciones
+            donations
         })
 
         
