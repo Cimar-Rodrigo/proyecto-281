@@ -231,9 +231,6 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
 
                         id_donacion: donacion.dataValues.id_donacion,
                         fecha_d: donacion.dataValues.fecha_d,
-                        /*nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.nombre,
-                        ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.ap_paterno,
-                        ap_materno: donacion.dataValues.Usuario.dataValues.Persona.ap_materno,*/
                         postulantes: postulantes
     
                     }
@@ -273,7 +270,7 @@ export const getDetalleDonacion = async (req, res = response) => {
         let body = {
             producto: productos, 
             dinero: dineros,
-            alimento: dineros
+            alimento: alimentos
         }
 
         res.status(200).json(
