@@ -1,20 +1,16 @@
 import { DataTypes } from "sequelize"; 
 import db from "../database/connection.js";
 
-const Donacion = db.define("Donacion", {
+const Responsable_recojo = db.define("Responsable_recojo", {
+    id_user: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false
+    },
     id_donacion: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-    },
-    fecha_d: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    userD: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: false 
     },
     estado: {
         type: DataTypes.INTEGER,
@@ -22,4 +18,4 @@ const Donacion = db.define("Donacion", {
     }
 })
 
-export default Donacion;
+export default Responsable_recojo

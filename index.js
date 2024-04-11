@@ -4,6 +4,7 @@ import authRoutes from './routes/auth.js'
 import cors from 'cors'
 import db from './database/connection.js'
 import reviewRoutes from './routes/review.js'
+import donationRoutes from './routes/donation.js'
 
 const app = express()
 dotenv.config()
@@ -32,9 +33,17 @@ app.use('/api/auth', authRoutes)
 //TODO: CRUD: Eventos
 app.use('/api/review', reviewRoutes)
 
+app.use('/api/donation', donationRoutes)
+
+
 app.listen(process.env.PORT, () => {
   console.log('Server is running on port', process.env.PORT)
 })
+
+
+
+
+
 
 
 

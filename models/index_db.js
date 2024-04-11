@@ -25,6 +25,8 @@ import Usuario from './usuario.js'
 import Voluntario from './voluntario.js'
 import Usuario_n from './usuario_n.js'
 import Administrador from './administrador.js'
+import Responsable_recojo from './responsable_recojo.js'
+import Postulacion_recojo from './postulacion_recojo.js'
 
 Usuario.belongsTo(Persona, {foreignKey: "ci"})
 Persona.hasMany(Usuario, {foreignKey: "ci"})
@@ -61,6 +63,18 @@ Organizacion_receptora.hasMany(Encargado_receptor, {foreignKey: 'id_org_rec'})
 Voluntario.belongsTo(Usuario, {foreignKey:'id_user'})
 Usuario.hasMany(Voluntario, {foreignKey:"id_user"})
 
+
+Donacion.belongsTo(Donante, {foreignKey: "userD"})
+Donante.hasMany(Donacion, {foreignKey: "userD"})
+
+Donacion.belongsTo(Usuario, {foreignKey: "userD"})
+Usuario.hasMany(Donacion, {foreignKey: "userD"})
+
+
+Responsable_recojo.belongsTo(Donacion, {foreignKey: "id_donacion"})
+Donacion.hasMany(Responsable_recojo, {foreignKey: "id_donacion"})
+
+
 //Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
 //Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
 
@@ -92,5 +106,7 @@ export {
     Usuario,
     Voluntario,
     Usuario_n,
-    Administrador
+    Administrador,
+    Responsable_recojo,
+    Postulacion_recojo
 }

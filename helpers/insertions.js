@@ -1,4 +1,4 @@
-import { Donante, Donante_natural, Organizacion_donante, Encargado_donante, Encargado_org_ben, Encargado_receptor, Receptor, Receptor_natural, Voluntario, Administrador, Organizacion_benefica, Organizacion_receptora } from '../models/index_db.js'
+import { Donante, Donante_natural, Organizacion_donante, Encargado_donante, Encargado_org_ben, Encargado_receptor, Receptor, Receptor_natural, Voluntario, Administrador, Organizacion_benefica, Organizacion_receptora, Donacion, Producto, Alimento, Dinero } from '../models/index_db.js'
 import Usuario_n from '../models/usuario_n.js';
 
 
@@ -59,4 +59,20 @@ export const verificar_tipo = async (id_user) => {
     
     console.log(tipo)
     return tipo;
+}
+
+export const insert_donacion = async(fecha_d, userD, estado) => {
+    await new Donacion({fecha_d, userD, estado}).save()
+}
+
+export const insert_producto = async(nombre_p, tipo_p, cantidad_p, medida_unitaria_p, id_donacion) => {
+    await new Producto({nombre_p, tipo_p, cantidad_p, medida_unitaria_p, id_donacion}).save()
+}
+
+export const insert_dinero = async(monto, cambio, id_donacion) => {
+    await new Dinero({monto, cambio, id_donacion}).save()
+}
+
+export const insert_alimento = async(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, id_donacion) => {
+    await new Alimento({nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, id_donacion}).save()
 }
