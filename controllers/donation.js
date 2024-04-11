@@ -4,10 +4,13 @@ import { insert_alimento, insert_producto, insert_dinero } from '../helpers/inse
 
 export const addDonation = async (req, res = response) => {
     const { id_user, alimento, producto, dinero, fecha_d } = req.body;
+
+    
     try{
         
         const donacion = new Donacion({fecha_d, userD: id_user, estado: 0})
         await donacion.save();
+        console.log(id_user, alimento, producto, dinero, fecha_d)
 
         if(alimento){
             const { alimento } = req.body;
@@ -113,6 +116,7 @@ export const confirmarResponsableDonacion = async (req, res = response) => {
 export const getPendingDonationsResponsableVoluntario = async (req, res = response) => {
     const {id_user} = req.body
     try{
+        let donaciones = []
         const donations = await Donacion.findAll(
             {
                 where:{
@@ -127,11 +131,43 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
             }
         )
         
-        
+
+        donations.map((donacion) => {
+            if(donacion.dataValues.Responsable_recojos.length === 0 ){
+                donaciones = [...donaciones,
+                    {
+                        id_donacion: donacion.dataValues.id_donacion,
+                        fecha_d: donacion.dataValues.fecha_d,
+                        estado: donacion.dataValues.estado,
+                        userD: donacion.dataValues.userD,
+                    }
+                ]
+            }else{
+                let sw = true;
+                donacion.dataValues.Responsable_recojos.map((responsable) => {
+                    console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
+                    if(responsable.dataValues.id_user === id_user && sw){
+                        sw = false;
+                    }
+                    
+                })
+
+                if(sw){
+                    donaciones = [...donaciones,
+                        {
+                            id_donacion: donacion.dataValues.id_donacion,
+                            fecha_d: donacion.dataValues.fecha_d,
+                            estado: donacion.dataValues.estado,
+                            userD: donacion.dataValues.userD,
+                        }
+                    ]
+                }
+            }    
+        })
 
         res.json({
             ok: true,
-            donations
+            donaciones
         })
     }
     catch(e){
