@@ -1,5 +1,5 @@
 import { response } from 'express';
-import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario } from '../models/index_db.js';
+import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario, Producto, Dinero, Alimento } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 
 export const addDonation = async (req, res = response) => {
@@ -127,6 +127,10 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
                     
                     {
                         model: Responsable_recojo
+                    },
+                    {
+                        model: Usuario,
+                        include: [{model: Persona}]
                     }
                 ]
             }
@@ -135,18 +139,20 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
 
         donations.map((donacion) => {
             if(donacion.dataValues.Responsable_recojos.length === 0 ){
+                console.log(donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre)
                 donaciones = [...donaciones,
                     {
                         id_donacion: donacion.dataValues.id_donacion,
                         fecha_d: donacion.dataValues.fecha_d,
                         estado: donacion.dataValues.estado,
-                        userD: donacion.dataValues.userD,
+                        nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                        ap_paterno_donante: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
                     }
                 ]
             }else{
                 let sw = true;
                 donacion.dataValues.Responsable_recojos.map((responsable) => {
-                console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
+                //console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
                 if(responsable.dataValues.id_user === id_user && sw){
                     sw = false;
                 }
@@ -159,7 +165,8 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
                             id_donacion: donacion.dataValues.id_donacion,
                             fecha_d: donacion.dataValues.fecha_d,
                             estado: donacion.dataValues.estado,
-                            userD: donacion.dataValues.userD,
+                            nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                            ap_paterno_donante: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
                         }
                     ]
                 }
@@ -202,23 +209,43 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
         )
 
         donations.map((donacion) => {
-            donaciones = [...donaciones,
-                {
-                    id_donacion: donacion.dataValues.id_donacion,
-                    fecha_d: donacion.dataValues.fecha_d,
-                    /*nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.nombre,
-                    ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.ap_paterno,
-                    ap_materno: donacion.dataValues.Usuario.dataValues.Persona.ap_materno,*/
-                    responsable_recojo: donacion.dataValues.Responsable_recojos
+            if(donacion.dataValues.Responsable_recojos.length !== 0){
 
-                }
-            ]
+                let postulantes = []
+
+                donacion.dataValues.Responsable_recojos.map( (postulante) => {
+                    postulantes = [...postulantes,
+                        {
+                            id_user: postulante.dataValues.Usuario.dataValues.id_user,
+                            ci: postulante.dataValues.Usuario.dataValues.Persona.dataValues.ci,
+                            nombre: postulante.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                            ap_paterno: postulante.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+                            ap_materno: postulante.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno,
+                        }
+                    ]
+                })
+
+
+                donaciones = [...donaciones,
+                    {
+
+                        id_donacion: donacion.dataValues.id_donacion,
+                        fecha_d: donacion.dataValues.fecha_d,
+                        /*nombre_donante: donacion.dataValues.Usuario.dataValues.Persona.nombre,
+                        ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.ap_paterno,
+                        ap_materno: donacion.dataValues.Usuario.dataValues.Persona.ap_materno,*/
+                        postulantes: postulantes
+    
+                    }
+                ]
+            }
+            
         })
 
-        console.log(donations)
+        //console.log(donaciones)
         res.status(200).json({
             ok: true,
-            donations
+            donaciones
         })
 
         
@@ -231,4 +258,39 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
             msg: 'Error al obtener las donaciones',
         })
     }
+}
+
+
+export const getDetalleDonacion = async (req, res = response) => {
+    let id_donacion = req.header('id_donacion')
+    id_donacion = parseInt(id_donacion)
+
+    try{
+        const productos = await Producto.findAll({where: {id_donacion: id_donacion}})
+        const dineros = await Dinero.findAll({where: {id_donacion: id_donacion}})
+        const alimentos = await Alimento.findAll({where: {id_donacion: id_donacion}})
+
+        let body = {
+            producto: productos, 
+            dinero: dineros,
+            alimento: dineros
+        }
+
+        res.status(200).json(
+            {
+                ok: true, 
+                body
+            }
+        )
+    }
+
+    catch(e){
+        res.status(500).json({
+            ok: false,
+            msg: "Fallo al encontrar los productos"
+        })
+    }
+
+
+
 }

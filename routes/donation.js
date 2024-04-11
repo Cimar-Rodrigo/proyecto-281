@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validarJWT } from "../middlewares/validar-jwt.js";
-import { addDonation, confirmarResponsableDonacion, getPendingDonationsResponsableAdmin, getPendingDonationsResponsableVoluntario, postularResponsableDonacion } from "../controllers/donation.js";
+import { addDonation, confirmarResponsableDonacion, getDetalleDonacion, getPendingDonationsResponsableAdmin, getPendingDonationsResponsableVoluntario, postularResponsableDonacion } from "../controllers/donation.js";
 import { validarAdmin } from "../middlewares/validar-admin.js";
 
 const router = Router();
@@ -15,5 +15,6 @@ router.get("/getPendingDonationsAdmin", [validarJWT, validarAdmin], getPendingDo
 
 router.get("/getPendingDonationsVoluntario", [validarJWT], getPendingDonationsResponsableVoluntario );
 
+router.get("/getDetalleDonacion", [validarJWT], getDetalleDonacion)
 
 export default router;
