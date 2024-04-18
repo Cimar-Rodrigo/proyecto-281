@@ -15,7 +15,17 @@ const Responsable_recojo = db.define("Responsable_recojo", {
     estado: {
         type: DataTypes.INTEGER,
         allowNull: false
+    },
+    
+    cantidad: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    estado_c: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
+    
 })
 
 export default Responsable_recojo

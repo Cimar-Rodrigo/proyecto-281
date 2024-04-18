@@ -1,5 +1,5 @@
 import { response } from 'express';
-import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario, Producto, Dinero, Alimento } from '../models/index_db.js';
+import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario, Producto, Dinero, Alimento, Postulacion_recojo } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 
 export const addDonation = async (req, res = response) => {
@@ -54,11 +54,10 @@ export const addDonation = async (req, res = response) => {
     
 }
 
-
 export const postularResponsableDonacion = async (req, res = response) => {
-    const { id_donacion, id_user } = req.body
+    const { id_donacion, id_user, cantidad } = req.body
     try{
-        await new Responsable_recojo( { id_user, id_donacion, estado: 0 } ).save()
+        await new Responsable_recojo( { id_user, id_donacion, estado: 0, cantidad, estado_c: 0 } ).save()
         res.status(201).json({
             ok: true,
             msg: 'Postulacion realizada'
@@ -71,8 +70,6 @@ export const postularResponsableDonacion = async (req, res = response) => {
         })
     }
 }
-
-
 
 export const confirmarResponsableDonacion = async (req, res = response) => {
     const { id_donacion, id_user } = req.body
@@ -152,7 +149,6 @@ export const getPendingDonationsResponsableVoluntario = async (req, res = respon
             }else{
                 let sw = true;
                 donacion.dataValues.Responsable_recojos.map((responsable) => {
-                //console.log(donacion.dataValues.id_donacion, id_user, responsable.dataValues.id_user)
                 if(responsable.dataValues.id_user === id_user && sw){
                     sw = false;
                 }
@@ -224,8 +220,6 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
                         }
                     ]
                 })
-
-
                 donaciones = [...donaciones,
                     {
 
@@ -238,14 +232,10 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
             }
             
         })
-
-        //console.log(donaciones)
         res.status(200).json({
             ok: true,
             donaciones
         })
-
-        
 
     }
     catch(e){
@@ -288,6 +278,145 @@ export const getDetalleDonacion = async (req, res = response) => {
         })
     }
 
+}
 
+
+//--------------------------------------------------------------------------
+export const getDonacionColaborador = async (req, res = response) => {
+
+    try{
+        console.log('entro')
+        const donaciones = await Responsable_recojo.findAll({
+            where: {
+                estado: 1,
+                estado_c: 0 
+            },
+            include: [
+                {
+                    model: Usuario,
+                    include: [{model: Persona}]
+                    
+                }
+            ]
+        })
+
+        console.log(donaciones)
+
+        let body = []
+        donaciones.map((donacion) => {
+            body = [...body,
+                {
+                    id_donacion: donacion.dataValues.id_donacion,
+                    cantidad: donacion.dataValues.cantidad,
+                    nombre: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                    ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+                }
+            ]
+        })
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+    }
+    catch(e){
+        console.log(e)
+        res.status(500).json({
+            ok: false,
+            msg: 'Error al obtener las postulaciones'
+        })
+    }
+
+}
+
+
+export const postularColaboradorDonacion = async (req, res = response) => {
+    const { id_donacion, id_user } = req.body
+    try{
+
+        const colaboradores = await Postulacion_recojo.findAll({where:{id_donacion: id_donacion}})
+
+        const don = await Responsable_recojo.findAll({where:{
+            id_donacion: id_donacion     
+         }})
+        let cantidad = don[0].dataValues.cantidad 
+        if(colaboradores.length < cantidad - 1){
+            await new Postulacion_recojo( { id_user, id_donacion } ).save()
+            res.status(201).json({
+                ok: true,
+                msg: 'Postulacion realizada'
+            })
+        }
+        else if(colaboradores.length === cantidad - 1){
+            await new Postulacion_recojo( { id_user, id_donacion } ).save()
+            await Responsable_recojo.update({estado_c: 1}, {
+                where: {
+                    id_donacion: id_donacion
+                }
+            })
+            res.status(201).json({
+                ok: true,
+                msg: 'Postulacion realizada'
+            })
+        }
+        else{
+            res.status(400).json({
+                ok: false,
+                msg: 'No hay cupos disponibles'
+            })
+        }
+    }
+    catch{
+        res.status(500).json({
+            ok: false,
+            msg: 'Error al postular'
+        })
+    }
+}
+
+
+
+
+export const getEstadoPostulacionResponsable = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+    
+    try{
+        const postulacionesPendientes = await Responsable_recojo.findAll(
+            {
+                where: {
+                    id_user: id_user,
+                    estado: 0
+                }
+            }
+        )
+
+        const postulacionesAceptadas = await Responsable_recojo.findAll(
+            {
+                where: {
+                    id_user: id_user,
+                    estado: 1
+                }
+            }
+        )
+
+        let body = {
+            postulacionesPendientes: postulacionesPendientes,
+            postulacionesAceptadas: postulacionesAceptadas
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+
+
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las postulaciones pendientes'
+        })
+    }
 
 }
