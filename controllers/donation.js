@@ -217,6 +217,7 @@ export const getPendingDonationsResponsableAdmin = async (req, res = response) =
                             nombre: postulante.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
                             ap_paterno: postulante.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
                             ap_materno: postulante.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno,
+                            cantidad: postulante.dataValues.cantidad
                         }
                     ]
                 })
@@ -285,7 +286,6 @@ export const getDetalleDonacion = async (req, res = response) => {
 export const getDonacionColaborador = async (req, res = response) => {
 
     try{
-        console.log('entro')
         const donaciones = await Responsable_recojo.findAll({
             where: {
                 estado: 1,
