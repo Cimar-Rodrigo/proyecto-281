@@ -15,9 +15,11 @@ export const addDonation = async (req, res = response) => {
 
         if(alimento){
             const { alimento } = req.body;
+            let cont = 0;
             alimento.forEach(element => {
                 let {nombre_a, cantidad_a, medida_unitaria_a, caducidad_a} = element
-                //console.log(caducidad_a)
+                cont++;
+                console.log(caducidad_a, cont)
                 insert_alimento(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, donacion.id_donacion)
             });
         }
