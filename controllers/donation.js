@@ -6,7 +6,7 @@ import { Op } from '@sequelize/core';
 export const addDonation = async (req, res = response) => {
     const { id_user, alimento, producto, dinero, fecha_d } = req.body;
 
-    console.log(fecha_d)
+    console.log(req.body)
     try{
         
         const donacion = new Donacion({fecha_d, userD: id_user, estado: 0})
@@ -17,7 +17,7 @@ export const addDonation = async (req, res = response) => {
             const { alimento } = req.body;
             alimento.forEach(element => {
                 let {nombre_a, cantidad_a, medida_unitaria_a, caducidad_a} = element
-                console.log(caducidad_a)
+                //console.log(caducidad_a)
                 insert_alimento(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, donacion.id_donacion)
             });
         }
