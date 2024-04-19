@@ -1,28 +1,30 @@
 import { response } from 'express';
 import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario, Producto, Dinero, Alimento, Postulacion_recojo } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
+import { Op } from '@sequelize/core';
 
 export const addDonation = async (req, res = response) => {
     const { id_user, alimento, producto, dinero, fecha_d } = req.body;
 
-    
+    console.log(fecha_d)
     try{
         
         const donacion = new Donacion({fecha_d, userD: id_user, estado: 0})
         await donacion.save();
-        console.log(id_user, alimento, producto, dinero, fecha_d)
+        //console.log(id_user, alimento, producto, dinero, fecha_d)
 
         if(alimento){
             const { alimento } = req.body;
             alimento.forEach(element => {
                 let {nombre_a, cantidad_a, medida_unitaria_a, caducidad_a} = element
+                console.log(caducidad_a)
                 insert_alimento(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, donacion.id_donacion)
             });
         }
 
         if(producto){
             const { producto } = req.body;
-            console.log(producto)
+            //console.log(producto)
             producto.forEach(element => {
                 let {nombre_p, tipo_p, cantidad_p, medida_unitaria_p} = element
                 insert_producto(nombre_p, tipo_p, cantidad_p, medida_unitaria_p, donacion.id_donacion)
@@ -284,12 +286,14 @@ export const getDetalleDonacion = async (req, res = response) => {
 
 //--------------------------------------------------------------------------
 export const getDonacionColaborador = async (req, res = response) => {
-
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
     try{
         const donaciones = await Responsable_recojo.findAll({
             where: {
                 estado: 1,
-                estado_c: 0 
+                estado_c: 0,
+                id_user: {[Op.ne]: id_user}
             },
             include: [
                 {
@@ -339,6 +343,7 @@ export const postularColaboradorDonacion = async (req, res = response) => {
         const don = await Responsable_recojo.findAll({where:{
             id_donacion: id_donacion     
          }})
+
         let cantidad = don[0].dataValues.cantidad 
         if(colaboradores.length < cantidad - 1){
             await new Postulacion_recojo( { id_user, id_donacion } ).save()
