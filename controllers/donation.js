@@ -454,3 +454,34 @@ export const getEstadoPostulacionResponsable = async (req, res = response) => {
     }
 
 }
+
+
+export const getPostulacionColaborador = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+    
+    try{
+        const postulaciones = await Postulacion_recojo.findAll(
+            {
+                where: {
+                    id_user: id_user
+                }
+            }
+        )
+
+        let body = {
+            postulaciones: postulaciones
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las postulaciones pendientes'
+        })
+    }
+}
