@@ -78,6 +78,9 @@ Donacion.hasMany(Responsable_recojo, {foreignKey: "id_donacion"})
 Responsable_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Responsable_recojo, {foreignKey: "id_user"})
 
+Postulacion_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Postulacion_recojo, {foreignKey: "id_user"})
+
 //Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
 //Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
 

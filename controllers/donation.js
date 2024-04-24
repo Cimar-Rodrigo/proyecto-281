@@ -6,7 +6,6 @@ import { Op } from '@sequelize/core';
 export const addDonation = async (req, res = response) => {
     const { id_user, alimento, producto, dinero, fecha_d } = req.body;
 
-    console.log(req.body)
     try{
         
         const donacion = new Donacion({fecha_d, userD: id_user, estado: 0})
@@ -19,7 +18,6 @@ export const addDonation = async (req, res = response) => {
             alimento.forEach(element => {
                 let {nombre_a, cantidad_a, medida_unitaria_a, caducidad_a} = element
                 cont++;
-                console.log(caducidad_a, cont)
                 insert_alimento(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, donacion.id_donacion)
             });
         }
@@ -306,23 +304,52 @@ export const getDonacionColaborador = async (req, res = response) => {
             ]
         })
 
-        console.log(donaciones)
-
-        let body = []
-        donaciones.map((donacion) => {
-            body = [...body,
-                {
-                    id_donacion: donacion.dataValues.id_donacion,
-                    cantidad: donacion.dataValues.cantidad,
-                    nombre: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
-                    ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
-                }
-            ]
+        const colaboradores = await Postulacion_recojo.findAll({
+            where: {
+                id_user: id_user
+            }
         })
+
+        //si ya te encuentras como colaborador en la donacion no mostrar esa donacion
+
+        let don = []
+        
+        donaciones.map((donacion) => {
+            let sw = true;
+            colaboradores.map((colaborador) => {
+                if(donacion.dataValues.id_donacion === colaborador.dataValues.id_donacion){
+                    sw = false;
+                }
+            })
+            
+            if(sw){
+                don = [...don,
+                    {
+                        id_donacion: donacion.dataValues.id_donacion,
+                        //fecha_d: donacion.dataValues.Donacion.dataValues.fecha_d,
+                        nombre: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                        ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+                        //cantidad: donacion.dataValues.cantidad
+                    }
+                ]
+            }
+        })
+
+        //let body = []
+        //donaciones.map((donacion) => {
+        //    body = [...body,
+        //        {
+        //            id_donacion: donacion.dataValues.id_donacion,
+        //            cantidad: donacion.dataValues.cantidad,
+        //            nombre: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+        //            ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+        //        }
+        //    ]
+        //})
 
         res.status(200).json({
             ok: true,
-            body
+            don
         })
     }
     catch(e){
