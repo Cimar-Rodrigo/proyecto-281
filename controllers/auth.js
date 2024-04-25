@@ -77,6 +77,8 @@ export const crearUsuario = async (req, res = response) => {
             ok: true,
             uid: usuario.id_user,
             name: usuario.user,
+            nombre: usuario.nombre,
+            ap_paterno: usuario.ap_paterno,
             tipo: tipo,
             token,
             estado: estado
