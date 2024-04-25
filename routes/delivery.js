@@ -3,6 +3,9 @@ import { validarJWT } from "../middlewares/validar-jwt.js";
 
 const router = Router();
 
+
+router.post("/addSolicitud" , [validarJWT], addSolicitud);
+
 router.post("/postularResponsableDelivery",[validarJWT], postularResponsableDelivery);
 
 router.post("/confirmarResponsableDelivery", [validarJWT, validarAdmin], confirmarResponsableDelivery);

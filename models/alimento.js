@@ -19,15 +19,7 @@ const Alimento = db.define("Alimento", {
     medida_unitaria_a: {
         type: DataTypes.STRING,
         allowNull: false,
-    },
-    caducidad_a: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    id_donacion: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
+    }
 })
 
 export default Alimento;

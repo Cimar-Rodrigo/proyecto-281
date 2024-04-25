@@ -1,21 +1,22 @@
 import { DataTypes } from "sequelize"; 
 import db from "../database/connection.js";
 
-const Dinero = db.define("Dinero", {
-    id_dinero: {
+
+const Contiene_p = db.define("Contiene_p", {
+    id_donacion: {
         type: DataTypes.INTEGER,
         primaryKey: true,
-        autoIncrement: true,
+        allowNull: false,
+    },
+    id_producto: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
         allowNull: false,
     },
     monto: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    cambio: {
-        type: DataTypes.STRING,
-        allowNull: false,
     }
 })
 
-export default Dinero;
+export default Contiene_p;

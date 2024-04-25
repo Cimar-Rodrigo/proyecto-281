@@ -23,10 +23,6 @@ const Producto = db.define("Producto", {
     medida_unitaria_p: {
         type: DataTypes.STRING,
         allowNull: false,
-    },
-    id_donacion: {
-        type: DataTypes.INTEGER,
-        allowNull: false
     }
 })
 

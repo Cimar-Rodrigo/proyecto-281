@@ -1,5 +1,5 @@
 import { response } from 'express';
-import { Donacion, Responsable_recojo, Usuario, Persona, Voluntario, Producto, Dinero, Alimento, Postulacion_recojo } from '../models/index_db.js';
+import { Donacion, Responsable_recojo, Usuario, Persona, Producto, Dinero, Alimento, Postulacion_recojo, Contiene_a, Contiene_d, Contiene_p } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 import { Op } from '@sequelize/core';
 
@@ -14,28 +14,61 @@ export const addDonation = async (req, res = response) => {
 
         if(alimento){
             const { alimento } = req.body;
-            let cont = 0;
-            alimento.forEach(element => {
-                let {nombre_a, cantidad_a, medida_unitaria_a, caducidad_a} = element
-                cont++;
-                insert_alimento(nombre_a, cantidad_a, medida_unitaria_a, caducidad_a, donacion.id_donacion)
+
+            alimento.forEach(async element => {
+                let {cantidad_a, caducidad_a, nombre_a} = element
+                
+                let ali = await Alimento.findAll({where: {nombre_a: nombre_a}})
+                let cantidad = ali[0].dataValues.cantidad_a + cantidad_a;
+                console.log(cantidad)
+                await Alimento.update({cantidad_a: cantidad}, {
+                    where: {
+                        nombre_a: nombre_a
+                    }
+                })
+
+                await new Contiene_a({id_alimento: ali[0].dataValues.id_alimento, id_donacion: donacion.id_donacion, monto: cantidad_a, caducidad_a: caducidad_a}).save()
+                
             });
         }
 
         if(producto){
             const { producto } = req.body;
             //console.log(producto)
-            producto.forEach(element => {
-                let {nombre_p, tipo_p, cantidad_p, medida_unitaria_p} = element
-                insert_producto(nombre_p, tipo_p, cantidad_p, medida_unitaria_p, donacion.id_donacion)
+
+
+            producto.forEach(async element => {
+                let {cantidad_p, nombre_p} = element
+
+                let pro = await Producto.findAll({where: {nombre_p: nombre_p}});
+                let cantidad = pro[0].dataValues.cantidad_p + cantidad_p;
+                console.log(cantidad)
+                await Producto.update({cantidad_p: cantidad}, {
+                    where: {
+                        nombre_p: nombre_p
+                    }
+                })
+
+                await new Contiene_p({id_producto: pro[0].dataValues.id_producto, id_donacion: donacion.id_donacion, monto: cantidad_p}).save()
             });
         }
 
         if(dinero){
             const { dinero } = req.body;
-            dinero.forEach(element => {
-                let {monto, cambio} = element
-                insert_dinero(monto, cambio, donacion.id_donacion)
+            dinero.forEach(async element => {
+                let {monto, cambio, id_dinero} = element
+                
+                let din = await Dinero.findAll({where: {cambio: cambio}});
+                let cantidad = din[0].dataValues.monto + monto;
+                console.log(cantidad)
+                await Dinero.update({monto: cantidad}, {
+                    where: {
+                        cambio: cambio
+                    }
+                })
+
+                await new Contiene_d({id_donacion: donacion.id_donacion, id_dinero: din[0].dataValues.id_dinero,  monto: monto}).save()
+
             });
         }
 
@@ -256,14 +289,80 @@ export const getDetalleDonacion = async (req, res = response) => {
     id_donacion = parseInt(id_donacion)
 
     try{
-        const productos = await Producto.findAll({where: {id_donacion: id_donacion}})
-        const dineros = await Dinero.findAll({where: {id_donacion: id_donacion}})
-        const alimentos = await Alimento.findAll({where: {id_donacion: id_donacion}})
+        const productos = await Contiene_p.findAll(
+            {
+                where: {
+                    id_donacion: id_donacion
+                },
+                include: 
+                    {
+                        model: Producto
+                    }
+                
+            }
+        )
+
+        const dineros = await Contiene_d.findAll(
+            {
+                where: {
+                    id_donacion: id_donacion
+                },
+                include:{
+                    model: Dinero
+                }
+            }
+
+        )
+        const alimentos = await Contiene_a.findAll(
+            {
+                where: {
+                    id_donacion: id_donacion
+                },
+                include: {
+                    model: Alimento
+                }
+            }
+        )
+        let produ = []
+        let ali = []
+        let dine = []
+
+        productos.map( (producto) => {
+            produ = [...produ,
+                {
+                    nombre: producto.dataValues.Producto.dataValues.nombre_p,
+                    cantidad: producto.monto
+                }
+            ]
+        })
+
+        dineros.map( (dinero) => {
+            dine = [...dine,
+                {
+                    cambio: dinero.dataValues.Dinero.cambio,
+                    cantidad: dinero.dataValues.monto
+                }
+
+            ]
+        })
+
+        alimentos.map((alimento)=>{
+            ali = [...ali,
+                {
+                    nombre: alimento.dataValues.Alimento.dataValues.nombre_a,
+                    cantidad: alimento.dataValues.monto
+                }
+
+            ]
+        })
+
+
+
 
         let body = {
-            producto: productos, 
-            dinero: dineros,
-            alimento: alimentos
+            producto: produ, 
+            dinero: dine,
+            alimento: ali
         }
 
         res.status(200).json(
@@ -275,6 +374,7 @@ export const getDetalleDonacion = async (req, res = response) => {
     }
 
     catch(e){
+        console.log(e)
         res.status(500).json({
             ok: false,
             msg: "Fallo al encontrar los productos"

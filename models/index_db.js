@@ -27,6 +27,10 @@ import Usuario_n from './usuario_n.js'
 import Administrador from './administrador.js'
 import Responsable_recojo from './responsable_recojo.js'
 import Postulacion_recojo from './postulacion_recojo.js'
+import Contiene_a from  './contiene_a.js';
+import Contiene_d from './contiene_d.js';
+import Contiene_p from './contiene_p.js'
+
 
 Usuario.belongsTo(Persona, {foreignKey: "ci"})
 Persona.hasMany(Usuario, {foreignKey: "ci"})
@@ -81,6 +85,14 @@ Usuario.hasMany(Responsable_recojo, {foreignKey: "id_user"})
 Postulacion_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Postulacion_recojo, {foreignKey: "id_user"})
 
+Contiene_a.belongsTo(Alimento, {foreignKey: "id_alimento"})
+Alimento.hasMany(Contiene_a, {foreignKey: "id_alimento"})
+
+Contiene_p.belongsTo(Producto, {foreignKey: "id_producto"})
+Producto.hasMany(Contiene_p, {foreignKey: "id_producto"})
+
+Contiene_d.belongsTo(Dinero, {foreignKey: "id_dinero"})
+Dinero.hasMany(Contiene_d, {foreignKey: "id_dinero"})
 //Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
 //Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
 
@@ -114,5 +126,8 @@ export {
     Usuario_n,
     Administrador,
     Responsable_recojo,
-    Postulacion_recojo
+    Postulacion_recojo,
+    Contiene_a,
+    Contiene_d,
+    Contiene_p
 }
