@@ -18,9 +18,15 @@ const Solicitud = db.define("Solicitud", {
         allowNull: false,
     },
     estado: {
-        type: DataTypes.STRING,
+        type: DataTypes.INTEGER,
         allowNull: false,
-    }
+    },
+    estado_s: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+
+
 })
 
 export default Solicitud;

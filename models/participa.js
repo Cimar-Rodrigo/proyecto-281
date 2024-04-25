@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import db from "../database/connection.js";
 
 const Participa = db.define("Participa", {
-    Id_solicitud: {
+    id_solicitud: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false,

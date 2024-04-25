@@ -30,7 +30,7 @@ import Postulacion_recojo from './postulacion_recojo.js'
 import Contiene_a from  './contiene_a.js';
 import Contiene_d from './contiene_d.js';
 import Contiene_p from './contiene_p.js'
-
+import Responsable_entrega from './responsable_entrega.js'
 
 Usuario.belongsTo(Persona, {foreignKey: "ci"})
 Persona.hasMany(Usuario, {foreignKey: "ci"})
@@ -74,16 +74,27 @@ Donante.hasMany(Donacion, {foreignKey: "userD"})
 Donacion.belongsTo(Usuario, {foreignKey: "userD"})
 Usuario.hasMany(Donacion, {foreignKey: "userD"})
 
+Solicitud.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Solicitud, {foreignKey: "id_user"})
 
 Responsable_recojo.belongsTo(Donacion, {foreignKey: "id_donacion"})
 Donacion.hasMany(Responsable_recojo, {foreignKey: "id_donacion"})
 
+Responsable_entrega.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
+Solicitud.hasMany(Responsable_entrega, {foreignKey: "id_solicitud"})
 
 Responsable_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Responsable_recojo, {foreignKey: "id_user"})
 
 Postulacion_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Postulacion_recojo, {foreignKey: "id_user"})
+
+Responsable_entrega.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Responsable_entrega, {foreignKey: "id_user"})
+
+Participa.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Participa, {foreignKey:"id_user"})
+
 
 Contiene_a.belongsTo(Alimento, {foreignKey: "id_alimento"})
 Alimento.hasMany(Contiene_a, {foreignKey: "id_alimento"})
@@ -95,6 +106,25 @@ Contiene_d.belongsTo(Dinero, {foreignKey: "id_dinero"})
 Dinero.hasMany(Contiene_d, {foreignKey: "id_dinero"})
 //Donante_natural.belongsTo(Usuario, {foreignKey: 'id_user'})
 //Usuario.hasMany(Donante_natural, {foreignKey: 'id_user'})
+
+
+Tiene_a.belongsTo(Alimento, {foreignKey: "id_alimento"})
+Alimento.hasMany(Tiene_a, {foreignKey: "id_alimento"})
+
+Tiene_a.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
+Solicitud.hasMany(Tiene_a, {foreignKey: "id_solicitud"})    
+
+Tiene_d.belongsTo(Dinero, {foreignKey: "id_dinero"})
+Dinero.hasMany(Tiene_d, {foreignKey: "id_dinero"})
+
+Tiene_d.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
+Solicitud.hasMany(Tiene_d, {foreignKey: "id_solicitud"})
+
+Tiene_p.belongsTo(Producto, {foreignKey: "id_producto"})
+Producto.hasMany(Tiene_p, {foreignKey: "id_producto"})
+
+Tiene_p.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
+Solicitud.hasMany(Tiene_p, {foreignKey: "id_solicitud"})
 
 
 export {
@@ -129,5 +159,6 @@ export {
     Postulacion_recojo,
     Contiene_a,
     Contiene_d,
-    Contiene_p
+    Contiene_p,
+    Responsable_entrega
 }

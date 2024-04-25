@@ -435,18 +435,6 @@ export const getDonacionColaborador = async (req, res = response) => {
             }
         })
 
-        //let body = []
-        //donaciones.map((donacion) => {
-        //    body = [...body,
-        //        {
-        //            id_donacion: donacion.dataValues.id_donacion,
-        //            cantidad: donacion.dataValues.cantidad,
-        //            nombre: donacion.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
-        //            ap_paterno: donacion.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
-        //        }
-        //    ]
-        //})
-
         res.status(200).json({
             ok: true,
             don
