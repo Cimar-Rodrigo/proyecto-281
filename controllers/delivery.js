@@ -3,28 +3,28 @@ import { Alimento, Persona, Solicitud, Tiene_a, Tiene_d, Tiene_p, Producto, Dine
 import { ConstraintChecking, Op } from '@sequelize/core';
 
 export const addSolicitud = async (req, res = response) => {
-    const {id_user, fecha_solicitud, alimentos, productos, dinero} = req.body;
+    const {id_user, fecha_solicitud, alimento, producto, dinero} = req.body;
 
     try{
         const solicitud = new Solicitud({fecha_solicitud, id_user, estado:0, estado_s:0});
         await solicitud.save();
 
-        console.log(alimentos, productos, dinero)
+        console.log(alimento, producto, dinero)
 
-        if(alimentos){
+        if(alimento){
             // Agregar alimento
-            alimentos.map(async (alimento) => {
-                let {nombre_a, cantidad_a} = alimento;
+            alimento.map(async (alimentos) => {
+                let {nombre_a, cantidad_a} = alimentos;
                 let ali = await Alimento.findOne({where: {nombre_a:nombre_a}});
                 let id_alimento = ali.id_alimento;
                 let tiene_a = new Tiene_a({id_alimento, id_solicitud: solicitud.id_solicitud, cantidad_a: cantidad_a});
                 await tiene_a.save();
             })
         }
-        if(productos){
+        if(producto){
             // Agregar producto
-            productos.map(async (producto) => {
-                let {nombre_p, cantidad_p} = producto;
+            producto.map(async (productos) => {
+                let {nombre_p, cantidad_p} = productos;
                 let pro = await Producto.findOne({where: {nombre_p: nombre_p}});
                 let id_producto = pro.id_producto;
                 let tiene_p = new Tiene_p({id_producto, id_solicitud: solicitud.id_solicitud, cantidad_p: cantidad_p});
