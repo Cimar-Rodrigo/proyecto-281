@@ -3,7 +3,7 @@ import { Alimento, Persona, Solicitud, Tiene_a, Tiene_d, Tiene_p, Producto, Dine
 import { ConstraintChecking, Op } from '@sequelize/core';
 
 export const addSolicitud = async (req, res = response) => {
-    const {id_user, fecha_solicitud, alimentos, productos, dineros} = req.body;
+    const {id_user, fecha_solicitud, alimentos, productos, dinero} = req.body;
 
     try{
         const solicitud = new Solicitud({fecha_solicitud, id_user, estado:0, estado_s:0});
@@ -30,11 +30,11 @@ export const addSolicitud = async (req, res = response) => {
 
             })
         }
-        if(dineros){
+        if(dinero){
             // Agregar dinero
-            dineros.map(async (dinero) => {
+            dinero.map(async (dineros) => {
                 
-                let {monto, cambio} = dinero;
+                let {monto, cambio} = dineros;
                 let din = await Dinero.findOne({where: {cambio: cambio}});
                 let id_dinero = din.id_dinero;
                 let tiene_d = new Tiene_d({id_dinero, id_solicitud: solicitud.id_solicitud, monto: monto});
@@ -506,6 +506,7 @@ export const getSolicitudColaborador = async (req, res = response) => {
             where: {
                 estado: 1,
                 estado_c: 0,
+
                 id_user: {[Op.ne]: id_user}
             },
             include: [
@@ -530,7 +531,7 @@ export const getSolicitudColaborador = async (req, res = response) => {
         solicitudes.map((solicitud) => {
             let sw = true;
             colaboradores.map((colaborador) => {
-                if(solicitud.dataValues.id_solicitud === colaborador.dataValues.id_donacion){
+                if(solicitud.dataValues.id_solicitud === colaborador.dataValues.id_solicitud){
                     sw = false;
                 }
             })
