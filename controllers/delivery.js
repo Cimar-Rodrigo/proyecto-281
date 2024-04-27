@@ -9,6 +9,8 @@ export const addSolicitud = async (req, res = response) => {
         const solicitud = new Solicitud({fecha_solicitud, id_user, estado:0, estado_s:0});
         await solicitud.save();
 
+        console.log(alimentos, productos, dinero)
+
         if(alimentos){
             // Agregar alimento
             alimentos.map(async (alimento) => {
