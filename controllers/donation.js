@@ -331,7 +331,8 @@ export const getDetalleDonacion = async (req, res = response) => {
             produ = [...produ,
                 {
                     nombre: producto.dataValues.Producto.dataValues.nombre_p,
-                    cantidad: producto.monto
+                    cantidad: producto.monto,
+                    tipo: producto.dataValues.Producto.dataValues.tipo_p
                 }
             ]
         })
