@@ -5,11 +5,13 @@ const Tiene_p = db.define("Tiene_p", {
     
     id_producto: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        primaryKey: true,
+        allowNull: false
     },
     id_solicitud: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        primaryKey: true,
+        allowNull: false
     },
     cantidad_p:{
         type: DataTypes.INTEGER,
@@ -17,5 +19,4 @@ const Tiene_p = db.define("Tiene_p", {
     }
     
 })
-AcademyModule.removeAttribute('id');
 export default Tiene_p;
