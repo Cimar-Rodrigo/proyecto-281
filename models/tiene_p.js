@@ -5,12 +5,10 @@ const Tiene_p = db.define("Tiene_p", {
     
     id_producto: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
     },
     id_solicitud: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
     },
     cantidad_p:{
