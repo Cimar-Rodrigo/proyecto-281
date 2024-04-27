@@ -17,5 +17,5 @@ const Tiene_p = db.define("Tiene_p", {
     }
     
 })
-
+AcademyModule.removeAttribute('id');
 export default Tiene_p;

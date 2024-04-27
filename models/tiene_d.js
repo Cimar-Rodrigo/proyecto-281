@@ -15,6 +15,7 @@ const Tiene_d = db.define("Tiene_d", {
         type: DataTypes.INTEGER,
         
     }
-})
+});
+AcademyModule.removeAttribute('id');
 
 export default Tiene_d;
