@@ -376,7 +376,7 @@ export const getPendingSolicitudesResponsableAdmin = async (req, res = response)
                 solicitudes = [...solicitudes,
                     {
 
-                        id_solicitud: solicitud.dataValues.id_donacion,
+                        id_solicitud: solicitud.dataValues.id_solicitud,
                         fecha_solicitud: solicitud.dataValues.fecha_solicitud,
                         postulantes: postulantes
     
