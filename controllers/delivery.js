@@ -309,7 +309,7 @@ export const getPendingSolicitudesResponsableVoluntario = async (req, res = resp
                 if(sw){
                     solicitudes = [...solicitudes,
                         {
-                            id_solicitud: solicitud.dataValues.id_donacion,
+                            id_solicitud: solicitud.dataValues.id_solicitud,
                             fecha_solicitud: solicitud.dataValues.fecha_solicitud,
                             estado: solicitud.dataValues.estado,
                             nombre_solicitante: solicitud.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
@@ -541,7 +541,7 @@ export const getSolicitudColaborador = async (req, res = response) => {
             if(sw){
                 don = [...don,
                     {
-                        id_solicitudn: solicitud.dataValues.id_donacion,
+                        id_solicitud: solicitud.dataValues.id_solicitud,
                         //fecha_d: donacion.dataValues.Donacion.dataValues.fecha_d,
                         nombre: solicitud.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
                         ap_paterno: solicitud.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
@@ -570,7 +570,7 @@ export const postularColaboradorSolicitud = async (req, res = response) => {
     const { id_solicitud, id_user } = req.body
     try{
 
-        const colaboradores = await Participa.findAll({where:{id_donacion: id_donacion}})
+        const colaboradores = await Participa.findAll({where:{id_solicitud: id_solicitud}})
 
         const sol = await Responsable_entrega.findAll({where:{
             id_solicitud: id_solicitud     
