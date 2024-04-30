@@ -192,10 +192,10 @@ export const revalidarToken = async (req, res = response) => {
 export const mostrarDatos = async (req, res = response) => {
     let id_user = req.header('id_user')
     id_user = parseInt(id_user)
-    
+
     try{
-        const persona = await Persona.findOne({where:{ci: id_user}})
-        const usuario = await Usuario.findOne({where:{ci: id_user}})
+        const usuario = await Usuario.findOne({where:{id_user: id_user}})
+        const persona = await Persona.findOne({where:{ci: persona.ci}})
         if (!persona || !usuario){
             return res.status(400).json({
                 ok: false,
@@ -230,8 +230,8 @@ export const editarPerfil = async (req, res = response) => {
     const { nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
 
     try {
-        const persona = await Persona.findOne({where:{ci: id_user}})
-        const usuario = await Usuario.findOne({where:{ci: id_user}})
+        const usuario = await Usuario.findOne({where:{id_user: id_user}})
+        const persona = await Persona.findOne({where:{ci: usuario.ci}})
         if (!persona || !usuario){
             return res.status(400).json({
                 ok: false,
