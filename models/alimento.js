@@ -12,6 +12,10 @@ const Alimento = db.define("Alimento", {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    tipo_a: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     cantidad_a: {
         type: DataTypes.INTEGER,
         allowNull: false,

@@ -186,6 +186,7 @@ export const getItemsDisponibles = async (req, res = response) => {
             }
         });
 
+
         res.status(200).json({
             ok: true,
             alimentos,
