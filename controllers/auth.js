@@ -187,3 +187,137 @@ export const revalidarToken = async (req, res = response) => {
      
 }
 
+
+
+export const mostrarDatos = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+    
+    try{
+        const persona = await Persona.findOne({where:{ci: id_user}})
+        const usuario = await Usuario.findOne({where:{ci: id_user}})
+        if (!persona || !usuario){
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe un usuario con ese id'
+            })
+        }
+        const tipo = await verificar_tipo(usuario.id_user);
+        res.json({
+            ok: true,
+            id_user: usuario.id_user,
+            nombre: persona.nombre,
+            ap_paterno: persona.ap_paterno,
+            ap_materno: persona.ap_materno,
+            fecha_nac: persona.fecha_nac,
+            nro_cel: persona.nro_cel,
+            correo: persona.correo,
+            user: usuario.user,
+            tipo: tipo
+        })
+    }
+    catch(error){
+        res.status(500).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        })
+        console.log(error)        
+    }
+}
+
+export const editarPerfil = async (req, res = response) => {
+    const { id_user } = req;
+    const { nombre, ap_paterno, ap_materno, fecha_nac, nro_cel, correo, user, password, tipo } = req.body
+
+    try {
+        const persona = await Persona.findOne({where:{ci: id_user}})
+        const usuario = await Usuario.findOne({where:{ci: id_user}})
+        if (!persona || !usuario){
+            return res.status(400).json({
+                ok: false,
+                msg: 'No existe un usuario con ese id'
+            })
+        }
+
+        if (persona.correo !== correo){
+            if (await Persona.findOne({where:{correo: correo}})){
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un usuario con ese correo'
+                })
+            }
+        }
+        if (usuario.user !== user){
+            if (await Usuario.findOne({where:{user: user}})){
+                return res.status(400).json({
+                    ok: false,
+                    msg: 'Ya existe un usuario con ese usuario'
+                })
+            }
+        }
+
+        // encriptar contraseña
+        const salt = bcrypt.genSaltSync();
+        const passEnc = bcrypt.hashSync(password, salt);
+        // insercion de datos
+        persona.nombre = nombre
+        persona.ap_paterno = ap_paterno
+        persona.ap_materno = ap_materno
+        persona.fecha_nac = fecha_nac
+        persona.nro_cel = nro_cel
+        persona.correo = correo
+        await persona.save()
+
+        usuario.user = user
+        usuario.password = passEnc
+        await usuario.save()
+
+        if (tipo === 'donante') {
+            const { direccion_dn, lat, lng } = req.body;
+            insert_donante(direccion_dn, lat, lng, usuario.id_user)
+        }
+        else if(tipo === 'orgDonante'){
+            const {nombre_od, tipo_od, lat, lng , direccion_od, nit_od, puesto_trabajo_d} = req.body
+            insert_orgDonante(nombre_od, tipo_od, lat, lng, direccion_od, nit_od, puesto_trabajo_d, usuario.id_user)
+        }   
+        else if(tipo === 'receptorNatural'){
+            const { descripcion_rn, direccion_rn, lat, lng } = req.body
+            insert_receptorNatural(usuario.id_user, descripcion_rn, direccion_rn, lat, lng)
+            
+        }
+        else if(tipo === 'orgBenefica'){
+            const {puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od} = req.body
+            insert_OrgBenenefica(usuario.id_user, puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od)
+        }
+
+        else if(tipo === 'orgReceptora'){
+            const {puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od} = req.body
+            insert_orgReceptora(usuario.id_user, puesto_trabajo_d, nombre_od, tipo_od, direccion_od, lat, lng, nit_od)
+        }
+
+        else if(tipo === 'voluntario'){
+            const {horario, turno} = req.body
+            await new Voluntario({id_user: usuario.id_user, horario, turno}).save()
+        }
+        else if(tipo === 'usuarioN'){
+            await new Usuario_n({id_user: usuario.id_user}).save();
+        }
+
+        res.status(201).json({
+            ok: true,
+            id_usuario: usuario.id_user,
+            name: usuario.user,
+            tipo: tipo,
+            estado: usuario.estado
+    
+        })
+
+    }
+    catch(error){
+        res.status(500).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        })
+        console.log(error)        
+    }
+}

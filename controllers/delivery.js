@@ -526,6 +526,7 @@ export const getSolicitudColaborador = async (req, res = response) => {
             }
         })
 
+        
         //si ya te encuentras como colaborador en la donacion no mostrar esa donacion
 
         let don = []

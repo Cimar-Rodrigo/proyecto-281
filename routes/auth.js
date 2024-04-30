@@ -4,7 +4,7 @@
 */
 
 import { Router } from 'express';
-import { crearUsuario, loginUsuario, revalidarToken } from '../controllers/auth.js';
+import { crearUsuario, editarPerfil, loginUsuario, mostrarDatos, revalidarToken } from '../controllers/auth.js';
 import { check } from 'express-validator';
 import { validarCampos } from '../middlewares/validar-campos.js';
 import { validarJWT } from '../middlewares/validar-jwt.js';
@@ -44,6 +44,12 @@ router.post(
 router.get('/renew', [
     validarJWT
 ], revalidarToken)
+
+
+router.get('/mostrarDatos', [validarJWT], mostrarDatos);
+
+router.post('/editarDatos', [validarJWT], editarPerfil);
+
 
 // router.post('/admin', async (req, res) => {
 //     const { user, password, ci } = req.body
