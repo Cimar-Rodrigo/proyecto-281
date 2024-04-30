@@ -195,7 +195,7 @@ export const mostrarDatos = async (req, res = response) => {
 
     try{
         const usuario = await Usuario.findOne({where:{id_user: id_user}})
-        const persona = await Persona.findOne({where:{ci: persona.ci}})
+        const persona = await Persona.findOne({where:{ci: usuario.ci}})
         if (!persona || !usuario){
             return res.status(400).json({
                 ok: false,
