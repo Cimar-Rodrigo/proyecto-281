@@ -268,7 +268,7 @@ export const getPendingSolicitudesResponsableVoluntario = async (req, res = resp
             {
                 where:{
                     estado_s: 1,
-                    //estado: 0
+                    estado: 0
                 },
                 include: [
                     
