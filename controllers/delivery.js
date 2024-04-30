@@ -144,10 +144,39 @@ export const confirmarSolicitud = async (req, res = response) => {
 
 export const getSolicitudesPendientes = async (req, res = response) => {
     try{
-        let solicitudes = await Solicitud.findAll({where:{estado_s:0}});
+        let solicitudes = []
+        let solicitud = await Solicitud.findAll(
+            {
+                where:{
+                    estado_s: 0
+                },
+                
+                include: [
+                    {
+                        model: Usuario,
+                        include: [{model: Persona}]
+                    }
+                ]
+            
+            }
+            );
+
+            solicitud.map( (sol) =>{
+                solicitudes = [...solicitudes,{
+                    id_solicitud: sol.dataValues.id_solicitud,
+                    id_usuario: sol.dataValues.Usuario.dataValues.id_user,
+                    ci: sol.dataValues.Usuario.dataValues.Persona.ci,
+                    nombre: sol.dataValues.Usuario.dataValues.Persona.nombre,
+                    ap_paterno: sol.dataValues.Usuario.dataValues.Persona.ap_paterno,
+                    ap_materno: sol.dataValues.Usuario.dataValues.Persona.ap_materno
+                    
+                }]
+                
+            })
+            console.log(solicitudes)
         res.status(200).json({
             ok: true,
-            solicitudes
+            solicitud
         })
     }
 
