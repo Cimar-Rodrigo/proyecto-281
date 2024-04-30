@@ -173,10 +173,9 @@ export const getSolicitudesPendientes = async (req, res = response) => {
                 }]
                 
             })
-            console.log(solicitudes)
         res.status(200).json({
             ok: true,
-            solicitud
+            solicitudes
         })
     }
 
