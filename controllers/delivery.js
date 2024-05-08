@@ -716,3 +716,32 @@ export const getPostulacionColaborador = async (req, res = response) => {
         })
     }
 }
+
+export const verColaboradoresSolicitud = async (req, res = response) => {
+    let id_solicitud = req.header('id_solicitud')
+    id_solicitud = parseInt(id_solicitud)
+    try{
+        const colaboradores = await Participa.findAll(
+            {
+                where: {
+                    id_solicitud: id_solicitud
+                }
+            }
+        )
+
+        let body = {
+            colaboradores: colaboradores
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las postulaciones pendientes'
+        })
+    }
+}

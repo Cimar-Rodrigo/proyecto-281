@@ -574,3 +574,34 @@ export const getPostulacionColaborador = async (req, res = response) => {
         })
     }
 }
+
+
+
+export const verColaboradoresDonacion = async (req, res = response) => {
+    let id_donacion = req.header('id_donacion')
+    id_donacion = parseInt(id_donacion)
+    try{
+        const colaboradores = await Postulacion_recojo.findAll(
+            {
+                where: {
+                    id_donacion: id_donacion
+                }
+            }
+        )
+
+        let body = {
+            colaboradores: colaboradores
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las postulaciones pendientes'
+        })
+    }
+}
