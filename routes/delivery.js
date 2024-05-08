@@ -2,7 +2,11 @@ import { Router } from "express";
 import { validarJWT } from "../middlewares/validar-jwt.js";
 import { validarAdmin } from "../middlewares/validar-admin.js";
 
-import { getPostulacionColaborador, getEstadoPostulacionResponsable, postularColaboradorSolicitud, getSolicitudColaborador, getDetalleSolicitud, addSolicitud, getItemsDisponibles, confirmarSolicitud, getSolicitudesPendientes, postularResponsableDelivery, confirmarResponsableDelivery, getPendingSolicitudesResponsableVoluntario, getPendingSolicitudesResponsableAdmin } from "../controllers/delivery.js";
+import { getPostulacionColaborador, getEstadoPostulacionResponsable, postularColaboradorSolicitud, 
+    getSolicitudColaborador, getDetalleSolicitud, addSolicitud, getItemsDisponibles, 
+    confirmarSolicitud, getSolicitudesPendientes, postularResponsableDelivery, confirmarResponsableDelivery, 
+    getPendingSolicitudesResponsableVoluntario, getPendingSolicitudesResponsableAdmin, verColaboradoresSolicitud, 
+    verSolicitudesCompletas } from "../controllers/delivery.js";
 
 const router = Router();
 
@@ -34,17 +38,10 @@ router.post("/postularColaboradorSolicitud", [validarJWT], postularColaboradorSo
 router.get("/getEstadoPostulacionResponsable", [validarJWT], getEstadoPostulacionResponsable)
 
 router.get("/getPostulacionColaborador", [validarJWT], getPostulacionColaborador)
-//router.post("/getPendingDeliveriesAdmin", [validarJWT, validarAdmin], getPendingDeliveriesAdmin);
-//
-//router.post("/getPendingDeliveriesVoluntario", [validarJWT], getPendingDeliveriesVoluntario);
-//
-//router.get("/getDeliveryColaborador", [validarJWT], getDeliveryColaborador);
-//
-//router.post("/postularColaboradorDelivery", [validarJWT], postularColaboradorDelivery);
-//
-//router.get("/getEstadoPostulacionResponsable", [validarJWT], getEstadoPostulacionResponsable);
-//
-//router.get("/getPostulacionColaborador", [validarJWT], getPostulacionColaborador);
 
+router.get("/verSolicitudesCompletas", [validarJWT], verSolicitudesCompletas)
+
+
+router.get("/verColaboradoresSolicitud", [validarJWT], verColaboradoresSolicitud)
 
 export default router;

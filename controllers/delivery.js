@@ -717,6 +717,39 @@ export const getPostulacionColaborador = async (req, res = response) => {
     }
 }
 
+export const verSolicitudesCompletas = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+
+    try{
+        const solicitudes = await Responsable_entrega.findAll(
+            {
+                where: {
+                    id_user: id_user,
+                    estado_c: 1,
+                    estado: 1
+                }
+            }
+            )
+
+        let body = {
+            solicitudes: solicitudes
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las postulaciones pendientes'
+        })
+    }
+}
+
+
 export const verColaboradoresSolicitud = async (req, res = response) => {
     let id_solicitud = req.header('id_solicitud')
     id_solicitud = parseInt(id_solicitud)
@@ -725,12 +758,32 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
             {
                 where: {
                     id_solicitud: id_solicitud
-                }
+                },
+                include:[
+                    {
+                        model: Usuario,
+                        include: [{model: Persona}]
+                    }
+                ]
             }
         )
 
+        let colaboradoresArray = []
+
+        colaboradores.map((colaborador) => {
+            colaboradoresArray = [...colaboradoresArray,
+                {
+                    id_user: colaborador.dataValues.Usuario.dataValues.id_user,
+                    ci: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ci,
+                    nombre: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                    ap_paterno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+                    ap_materno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno
+                }
+            ]
+        })
+
         let body = {
-            colaboradores: colaboradores
+            colaboradores: colaboradoresArray
         };
 
         res.status(200).json({

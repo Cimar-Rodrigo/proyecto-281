@@ -56,7 +56,7 @@ export const addDonation = async (req, res = response) => {
         if(dinero){
             const { dinero } = req.body;
             dinero.forEach(async element => {
-                let {monto, cambio, id_dinero} = element
+                let {monto, cambio} = element
                 
                 let din = await Dinero.findAll({where: {cambio: cambio}});
                 let cantidad = din[0].dataValues.monto + monto;
@@ -577,6 +577,41 @@ export const getPostulacionColaborador = async (req, res = response) => {
 
 
 
+export const verDonacionesCompletas = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+
+    try{
+        const donacionesCompletas = await Responsable_recojo.findAll(
+            {
+                where: {
+                    id_user: id_user,
+                    estado: 1,
+                    estado_c: 1
+                }
+            }
+        )
+
+        let body = {
+            donacionesCompletas: donacionesCompletas
+        };
+
+        res.status(200).json({
+            ok: true,
+            body
+        })
+
+    }
+
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: 'Fallo al obtener las donaciones completas'
+        })
+    }
+
+}
+
 export const verColaboradoresDonacion = async (req, res = response) => {
     let id_donacion = req.header('id_donacion')
     id_donacion = parseInt(id_donacion)
@@ -585,12 +620,34 @@ export const verColaboradoresDonacion = async (req, res = response) => {
             {
                 where: {
                     id_donacion: id_donacion
-                }
+                },
+                include:[
+                    {
+                        model: Usuario,
+                        include: [{model: Persona}]
+                    }
+                ]
             }
         )
 
+
+        let colaboradoresArray = []
+
+        colaboradores.map((colaborador) => {
+            colaboradoresArray = [...colaboradoresArray,
+                {
+                    id_user: colaborador.dataValues.Usuario.dataValues.id_user,
+                    ci: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ci,
+                    nombre: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
+                    ap_paterno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
+                    ap_materno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno
+                }
+            ]
+        }
+        )
+
         let body = {
-            colaboradores: colaboradores
+            colaboradores: colaboradoresArray
         };
 
         res.status(200).json({

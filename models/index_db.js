@@ -127,6 +127,15 @@ Tiene_p.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
 Solicitud.hasMany(Tiene_p, {foreignKey: "id_solicitud"})
 
 
+Postulacion_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Postulacion_recojo, {foreignKey: "id_user"})
+
+Participa.belongsTo(Usuario, {foreignKey: "id_user"})
+Usuario.hasMany(Participa, {foreignKey: "id_user"})
+
+
+
+
 export {
     Alimento,
     Areas_de_servicio,
