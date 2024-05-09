@@ -1,5 +1,5 @@
 import { response } from "express";
-import { Alimento, Persona, Solicitud, Tiene_a, Tiene_d, Tiene_p, Producto, Dinero, Responsable_entrega, Participa, Usuario } from "../models/index_db.js";
+import { Alimento, Persona, Solicitud, Tiene_a, Tiene_d, Tiene_p, Producto, Dinero, Responsable_entrega, Participa, Usuario, Receptor_natural, Encargado_receptor, Organizacion_receptora, Encargado_org_ben, Organizacion_benefica } from "../models/index_db.js";
 import { ConstraintChecking, Op } from '@sequelize/core';
 
 export const addSolicitud = async (req, res = response) => {
@@ -763,14 +763,67 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
                     {
                         model: Usuario,
                         include: [{model: Persona}]
+                    },
+                    {
+                        model: Solicitud,
+                        include: [
+                            {
+                                model: Usuario,
+                                include:[
+
+                                    {
+                                        model: Receptor_natural,
+                                    },
+                                    {
+                                        model: Encargado_receptor,
+                                        include: {
+                                            model: Organizacion_receptora
+                                        }
+                                    },
+                                    {
+                                        model: Encargado_org_ben,
+                                        include: {
+                                            model: Organizacion_benefica
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ]
             }
         )
-
         let colaboradoresArray = []
+        let direccion_solicitante = ''
+        let latitud_solicitante = ''
+        let longitud_solicitante = ''
+
 
         colaboradores.map((colaborador) => {
+            //console.log(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues)
+            if(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Receptor_naturals.length !== 0){
+                
+                //console.log(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Receptor_naturals[0].dataValues)
+                direccion_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Receptor_naturals[0].dataValues.direccion_rn
+                latitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Receptor_naturals[0].dataValues.latitud_rn
+                longitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Receptor_naturals[0].dataValues.longitud_rn
+
+            }
+
+            if(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_receptors.length !== 0){
+                //console.log(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_receptors[0].dataValues)
+                direccion_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_receptors[0].dataValues.Organizacion_receptora.dataValues.direccion_or
+                latitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_receptors[0].dataValues.Organizacion_receptora.dataValues.latitud_or
+                longitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_receptors[0].dataValues.Organizacion_receptora.dataValues.longitud_or
+            }
+
+            if(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_org_bens.length !== 0){
+                //console.log(colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_org_bens[0].dataValues)
+                direccion_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_org_bens[0].dataValues.Organizacion_benefica.dataValues.direccion_b
+                latitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_org_bens[0].dataValues.Organizacion_benefica.dataValues.latitud_ob
+                longitud_solicitante = colaborador.dataValues.Solicitud.dataValues.Usuario.dataValues.Encargado_org_bens[0].dataValues.Organizacion_benefica.dataValues.longitud_ob
+            }
+
             colaboradoresArray = [...colaboradoresArray,
                 {
                     id_user: colaborador.dataValues.Usuario.dataValues.id_user,
@@ -782,12 +835,20 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
             ]
         })
 
+        const direccion = {
+            direccion_solicitante,
+            latitud_solicitante,
+            longitud_solicitante
+        }
+
         let body = {
+            direccion,
             colaboradores: colaboradoresArray
         };
 
         res.status(200).json({
             ok: true,
+
             body
         })
     }
