@@ -608,14 +608,14 @@ export const postularColaboradorSolicitud = async (req, res = response) => {
 
         let cantidad = sol[0].dataValues.cantidad 
         if(colaboradores.length < cantidad - 1){
-            await new Participa( { id_user, id_solicitud } ).save()
+            await new Participa( { id_user, id_solicitud, estado_p: 1 } ).save()
             res.status(201).json({
                 ok: true,
                 msg: 'Postulacion realizada'
             })
         }
         else if(colaboradores.length === cantidad - 1){
-            await new Participa( { id_user, id_solicitud } ).save()
+            await new Participa( { id_user, id_solicitud, estado_p: 1 } ).save()
             await Responsable_entrega.update({estado_c: 1}, {
                 where: {
                     id_solicitud: id_solicitud

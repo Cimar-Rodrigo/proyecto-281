@@ -465,14 +465,14 @@ export const postularColaboradorDonacion = async (req, res = response) => {
 
         let cantidad = don[0].dataValues.cantidad 
         if(colaboradores.length < cantidad - 1){
-            await new Postulacion_recojo( { id_user, id_donacion } ).save()
+            await new Postulacion_recojo( { id_user, id_donacion, estado_p: 1 } ).save()
             res.status(201).json({
                 ok: true,
                 msg: 'Postulacion realizada'
             })
         }
         else if(colaboradores.length === cantidad - 1){
-            await new Postulacion_recojo( { id_user, id_donacion } ).save()
+            await new Postulacion_recojo( { id_user, id_donacion, estado_p: 1 } ).save()
             await Responsable_recojo.update({estado_c: 1}, {
                 where: {
                     id_donacion: id_donacion
