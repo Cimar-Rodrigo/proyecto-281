@@ -519,7 +519,8 @@ export const getEstadoPostulacionResponsable = async (req, res = response) => {
             {
                 where: {
                     id_user: id_user,
-                    estado: 1
+                    estado: {[Op.gt]: 0},
+
                 }
             }
         )
@@ -724,7 +725,8 @@ export const verColaboradoresDonacion = async (req, res = response) => {
 
 export const iniciarTrayectoDonacion = async (req, res = response) =>{
 
-    const id_donacion = req.id_donacion
+    const id_donacion = req.body.id_donacion
+    console.log(req)
     try{
 
         await Responsable_recojo.update(
@@ -755,6 +757,7 @@ export const iniciarTrayectoDonacion = async (req, res = response) =>{
         })
     }
     catch(e){
+        console.log(e)
         res.status(400).json({
             ok: false,
             msg: "Hubo un error al iniciar el trayecto"
