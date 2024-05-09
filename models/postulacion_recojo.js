@@ -11,6 +11,10 @@ const Postulacion_recojo = db.define("Postulacion_recojo", {
         type: DataTypes.INTEGER,
         primaryKey: true,
         allowNull: false 
+    },
+    estado_p:{
+        type: DataTypes.INTEGER,
+        allowNull: false
     }
 })
 

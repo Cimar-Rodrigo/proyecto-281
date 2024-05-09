@@ -12,6 +12,10 @@ const Participa = db.define("Participa", {
         primaryKey: true,
         allowNull: false,
     },
+    estado_p:{
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    }
 })
 
 export default Participa;

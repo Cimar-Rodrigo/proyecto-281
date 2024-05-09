@@ -769,7 +769,7 @@ export const iniciarTrayectoDonacion = async (req, res = response) =>{
 
 
 export const terminarTrayectoDonacion = async (req, res = response) => {
-    const id_donacion = req.id_donacion
+    const id_donacion = req.body.id_donacion
     
 
     try{

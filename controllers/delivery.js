@@ -660,7 +660,7 @@ export const getEstadoPostulacionResponsable = async (req, res = response) => {
             {
                 where: {
                     id_user: id_user,
-                    estado: 1
+                    estado: {[Op.gt]: 0},
                 }
             }
         )
@@ -864,7 +864,7 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
 
 export const iniciarTrayectoSolicitud = async (req, res = response) =>{
 
-    const id_solicitud = req.id_solicitud
+    const id_solicitud = req.body.id_solicitud
     
 
     try{
@@ -908,7 +908,7 @@ export const iniciarTrayectoSolicitud = async (req, res = response) =>{
 
 
 export const terminarTrayectoSolicitud = async (req, res = response) => {
-    const id_solicitud = req.id_solicitud
+    const id_solicitud = req.body.id_solicitud
     
 
     try{
