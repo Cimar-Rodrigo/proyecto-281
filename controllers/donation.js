@@ -665,7 +665,7 @@ export const verColaboradoresDonacion = async (req, res = response) => {
                 longitud_donante = colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals[0].dataValues.longitud_dn
             }
 
-            console.log(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues)
+            //console.log(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues)
 
             if(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes.length !== 0){
 
