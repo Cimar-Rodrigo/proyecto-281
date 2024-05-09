@@ -1,5 +1,5 @@
 import { response } from 'express';
-import { Donacion, Responsable_recojo, Usuario, Persona, Producto, Dinero, Alimento, Postulacion_recojo, Contiene_a, Contiene_d, Contiene_p } from '../models/index_db.js';
+import { Donacion, Responsable_recojo, Usuario, Persona, Producto, Dinero, Alimento, Postulacion_recojo, Contiene_a, Contiene_d, Contiene_p, Donante, Donante_natural, Encargado_donante, Organizacion_donante } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 import { Op } from '@sequelize/core';
 
@@ -625,37 +625,93 @@ export const verColaboradoresDonacion = async (req, res = response) => {
                     {
                         model: Usuario,
                         include: [{model: Persona}]
+                    },
+                    {
+                        model: Donacion,
+                        include: [
+                            {
+                                model: Usuario,
+                                include:[
+                                    {
+                                        model: Donante_natural
+                                    },
+                                    {model: Encargado_donante,
+                                        include: {
+                                            model: Organizacion_donante
+                                        }
+                                    }
+                                ]
+                                
+                            }
+                        ]
                     }
                 ]
             }
         )
 
 
-        let colaboradoresArray = []
 
+
+        let colaboradoresArray = []
+        let direccion_donante = ''
+            let latitud_donante = ''
+            let longitud_donante = ''
         colaboradores.map((colaborador) => {
+            
+            if(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals.length !== 0){
+
+                direccion_donante = colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals[0].dataValues.direccion_dn
+                latitud_donante = colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals[0].dataValues.latitud_dn
+                longitud_donante = colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals[0].dataValues.longitud_dn
+            }
+
+            console.log(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues)
+
+            if(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes.length !== 0){
+
+                    direccion_donante=  colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues.direccion_od,
+                    latitud_donante= colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues.latitud_od,
+                    longitud_donante= colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Encargado_donantes[0].dataValues.Organizacion_donante.dataValues.longitud_od
+
+            }
+
+            
             colaboradoresArray = [...colaboradoresArray,
                 {
                     id_user: colaborador.dataValues.Usuario.dataValues.id_user,
                     ci: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ci,
                     nombre: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.nombre,
                     ap_paterno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_paterno,
-                    ap_materno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno
+                    ap_materno: colaborador.dataValues.Usuario.dataValues.Persona.dataValues.ap_materno,
+                    
                 }
             ]
-        }
-        )
+
+            //console.log(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals[0].dataValues)
+            
+        })
+
+        const direccion = 
+            {
+                dir_don: direccion_donante,
+                    lat_don: latitud_donante,
+                    lon_don: longitud_donante
+            }
+        
 
         let body = {
+            direccion,
             colaboradores: colaboradoresArray
         };
-
+        //console.log(body)
         res.status(200).json({
             ok: true,
             body
+            //colaboradores
         })
     }
     catch(e){
+        console.log(e)
         res.status(400).json({
             ok: false,
             msg: 'Fallo al obtener las postulaciones pendientes'

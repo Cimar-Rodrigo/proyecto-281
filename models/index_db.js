@@ -130,9 +130,16 @@ Solicitud.hasMany(Tiene_p, {foreignKey: "id_solicitud"})
 Postulacion_recojo.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Postulacion_recojo, {foreignKey: "id_user"})
 
+
+Postulacion_recojo.belongsTo(Donacion, {foreignKey: "id_donacion"})
+Donacion.hasMany(Postulacion_recojo, {foreignKey: "id_donacion"})
+
+
 Participa.belongsTo(Usuario, {foreignKey: "id_user"})
 Usuario.hasMany(Participa, {foreignKey: "id_user"})
 
+Participa.belongsTo(Solicitud, {foreignKey: "id_solicitud"})
+Solicitud.hasMany(Participa, {foreignKey: "id_solicitud"})
 
 
 
