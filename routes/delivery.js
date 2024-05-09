@@ -6,7 +6,10 @@ import { getPostulacionColaborador, getEstadoPostulacionResponsable, postularCol
     getSolicitudColaborador, getDetalleSolicitud, addSolicitud, getItemsDisponibles, 
     confirmarSolicitud, getSolicitudesPendientes, postularResponsableDelivery, confirmarResponsableDelivery, 
     getPendingSolicitudesResponsableVoluntario, getPendingSolicitudesResponsableAdmin, verColaboradoresSolicitud, 
-    verSolicitudesCompletas } from "../controllers/delivery.js";
+    verSolicitudesCompletas, 
+    iniciarTrayectoSolicitud,
+    terminarTrayectoSolicitud,
+    verMisSolicitudes} from "../controllers/delivery.js";
 
 const router = Router();
 
@@ -43,5 +46,16 @@ router.get("/verSolicitudesCompletas", [validarJWT], verSolicitudesCompletas)
 
 
 router.get("/verColaboradoresSolicitud", [validarJWT], verColaboradoresSolicitud)
+
+
+
+router.post("/iniciarTrayectoSolicitud", validarJWT, iniciarTrayectoSolicitud)
+
+router.post("/terminarTrayectoSolicitud", validarJWT, terminarTrayectoSolicitud)
+
+router.get("/verMisSolicitudes", validarJWT, verMisSolicitudes)
+
+
+
 
 export default router;

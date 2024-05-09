@@ -2,6 +2,7 @@ import { response } from 'express';
 import { Donacion, Responsable_recojo, Usuario, Persona, Producto, Dinero, Alimento, Postulacion_recojo, Contiene_a, Contiene_d, Contiene_p, Donante, Donante_natural, Encargado_donante, Organizacion_donante } from '../models/index_db.js';
 import { insert_alimento, insert_producto, insert_dinero } from '../helpers/insertions.js'
 import { Op } from '@sequelize/core';
+import { where } from 'sequelize';
 
 export const addDonation = async (req, res = response) => {
     const { id_user, alimento, producto, dinero, fecha_d } = req.body;
@@ -654,8 +655,8 @@ export const verColaboradoresDonacion = async (req, res = response) => {
 
         let colaboradoresArray = []
         let direccion_donante = ''
-            let latitud_donante = ''
-            let longitud_donante = ''
+        let latitud_donante = ''
+        let longitud_donante = ''
         colaboradores.map((colaborador) => {
             
             if(colaborador.dataValues.Donacion.dataValues.Usuario.dataValues.Donante_naturals.length !== 0){
@@ -718,3 +719,127 @@ export const verColaboradoresDonacion = async (req, res = response) => {
         })
     }
 }
+
+
+
+export const iniciarTrayectoDonacion = async (req, res = response) =>{
+
+    const id_donacion = req.id_donacion
+    try{
+
+        await Responsable_recojo.update(
+            {
+                estado: 2
+            },
+            {
+                where: {
+                    id_donacion:id_donacion
+                }
+            }
+        )
+    
+        await Postulacion_recojo.update(
+            {
+                estado: 2
+            },
+            {
+                where : {
+                    id_donacion: id_donacion
+                }
+            }
+        )   
+    
+        res.status(200).json({
+            ok: true,
+            msg: "Trayecto iniciado correctamente"
+        })
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Hubo un error al iniciar el trayecto"
+        })
+    }
+
+}
+
+
+
+export const terminarTrayectoDonacion = async (req, res = response) => {
+    const id_donacion = req.id_donacion
+    
+
+    try{
+        await Responsable_recojo.update(
+            {
+                estado: 3
+            },
+            {
+                where: {
+                    id_donacion:id_donacion
+                }
+            }
+        )
+    
+        await Postulacion_recojo.update(
+            {
+                estado: 3
+            },
+            {
+                where : {
+                    id_donacion: id_donacion
+                }
+            }
+        )   
+
+        res.status(200).json({
+            ok: true,
+            msg: "Trayecto terminado correctamente"
+        })
+
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Hubo un error al terminar el trayecto"
+        })
+    }
+
+
+}
+
+
+
+
+export const verMisDonaciones = async (req, res = response) => {
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+
+
+    try{
+        const donaciones = await Donacion.findAll(
+            {
+                where: {
+                    userD: id_user
+                }
+            }
+        )
+
+        res.status(200).json({
+            ok: true,
+            msg: "Lista de donaciones mostradas correctamente",
+            donaciones
+        })
+    }
+
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Fallo al obtener la lista de donaciones",
+        })
+    }
+    
+
+
+
+}   

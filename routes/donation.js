@@ -2,8 +2,9 @@ import { Router } from "express";
 import { validarJWT } from "../middlewares/validar-jwt.js";
 import { addDonation, confirmarResponsableDonacion, getDetalleDonacion, 
     getDonacionColaborador, getEstadoPostulacionResponsable, getPendingDonationsResponsableAdmin, 
-    getPendingDonationsResponsableVoluntario, getPostulacionColaborador, postularColaboradorDonacion, 
-    postularResponsableDonacion, verColaboradoresDonacion, verDonacionesCompletas } from "../controllers/donation.js";
+    getPendingDonationsResponsableVoluntario, getPostulacionColaborador, iniciarTrayectoDonacion, postularColaboradorDonacion, 
+    postularResponsableDonacion, terminarTrayectoDonacion, verColaboradoresDonacion, verDonacionesCompletas, 
+    verMisDonaciones} from "../controllers/donation.js";
 import { validarAdmin } from "../middlewares/validar-admin.js";
 
 const router = Router();
@@ -31,5 +32,15 @@ router.get("/getPostulacionColaborador", [validarJWT], getPostulacionColaborador
 router.get("/verDonacionesCompletas", [validarJWT], verDonacionesCompletas)
 
 router.get("/verColaboradoresDonacion",  [validarJWT], verColaboradoresDonacion)
+
+
+router.post("/iniciarTrayectoDonacion", validarJWT, iniciarTrayectoDonacion)
+
+router.post("/terminarTrayectoDonacion", validarJWT, terminarTrayectoDonacion)
+
+router.get("/verMisDonaciones", validarJWT, verMisDonaciones)
+
+
+
 
 export default router;

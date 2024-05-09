@@ -836,9 +836,9 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
         })
 
         const direccion = {
-            direccion_solicitante,
-            latitud_solicitante,
-            longitud_solicitante
+            dir: direccion_solicitante,
+            lat: latitud_solicitante,
+            lon: longitud_solicitante
         }
 
         let body = {
@@ -858,4 +858,119 @@ export const verColaboradoresSolicitud = async (req, res = response) => {
             msg: 'Fallo al obtener las postulaciones pendientes'
         })
     }
+}
+
+
+
+export const iniciarTrayectoSolicitud = async (req, res = response) =>{
+
+    const id_solicitud = req.id_solicitud
+    
+
+    try{
+        await Responsable_entrega.update(
+            {
+                estado: 2
+            },
+            {
+                where: {
+                    id_solicitud: id_solicitud
+                }
+            }
+        )
+    
+        await Participa.update(
+            {
+                estado: 2
+            },
+            {
+                where : {
+                    id_solicitud: id_solicitud
+                }
+            }
+        )   
+        res.status(200).json({
+            ok: true,
+            msg: "Trayecto iniciado correctamente"
+        })
+
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Hubo un error al iniciar el trayecto"
+        })
+    }
+
+
+}
+
+
+
+export const terminarTrayectoSolicitud = async (req, res = response) => {
+    const id_solicitud = req.id_solicitud
+    
+
+    try{
+        await Responsable_entrega.update(
+            {
+                estado: 3
+            },
+            {
+                where: {
+                    id_solicitud: id_solicitud
+                }
+            }
+        )
+    
+        await Participa.update(
+            {
+                estado: 3
+            },
+            {
+                where : {
+                    id_solicitud: id_solicitud
+                }
+            }
+        )   
+        res.status(200).json({
+            ok: true,
+            msg: "Trayecto terminado correctamente"
+        })
+
+    }
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Hubo un error al terminar el trayecto"
+        })
+    }
+
+}
+
+
+export const verMisSolicitudes = async (req, res = response) =>{
+    let id_user = req.header('id_user')
+    id_user = parseInt(id_user)
+
+
+    try{
+        const solicitudes = await Solicitud.findAll({where:{id_user:id_user}})
+        res.status(200).json({
+            ok: true,
+            msg: "Lista de solicitudes mostradas correctamente",
+            solicitudes
+        })
+    
+    }
+
+    catch(e){
+        res.status(400).json({
+            ok: false,
+            msg: "Fallo al obtener la lista de solicitudes",
+        })
+    }
+
+
+
 }
