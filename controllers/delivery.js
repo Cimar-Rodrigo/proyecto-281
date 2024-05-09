@@ -881,7 +881,7 @@ export const iniciarTrayectoSolicitud = async (req, res = response) =>{
     
         await Participa.update(
             {
-                estado: 2
+                estado_p: 2
             },
             {
                 where : {
@@ -925,7 +925,7 @@ export const terminarTrayectoSolicitud = async (req, res = response) => {
     
         await Participa.update(
             {
-                estado: 3
+                estado_p: 3
             },
             {
                 where : {

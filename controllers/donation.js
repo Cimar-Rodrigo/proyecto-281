@@ -742,7 +742,7 @@ export const iniciarTrayectoDonacion = async (req, res = response) =>{
     
         await Postulacion_recojo.update(
             {
-                estado: 2
+                estado_p: 2
             },
             {
                 where : {
@@ -786,7 +786,7 @@ export const terminarTrayectoDonacion = async (req, res = response) => {
     
         await Postulacion_recojo.update(
             {
-                estado: 3
+                estado_p: 3
             },
             {
                 where : {
